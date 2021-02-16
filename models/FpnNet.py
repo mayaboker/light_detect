@@ -2,6 +2,7 @@ import torch.nn as nn
 import torch
 from common import ConvBn
 from FpnHead import FpnHead
+from BackLite import Backbone
 
 class FpnNet(nn.Module):
     def __init__(self, backbone, head_ch, reg_dict, upsample_mode='conv', one_feat_map=True):
@@ -15,7 +16,7 @@ class FpnNet(nn.Module):
         
         self.num_maps = 1 if one_feat_map else num_laterals
         self.reg_heads = [
-            build_regression_head() for _ in range(self.num_maps)
+            self.build_regression_head() for _ in range(self.num_maps)
         ]
        
             
@@ -43,10 +44,22 @@ class FpnNet(nn.Module):
             reg_outs = []
             for reg_head in self.reg_dict.keys():
                 reg_outs.append(
-                    self.reg_heads[i](p_feat)
+                    self.reg_heads[i][reg_head](p_feat)
                 )
             outs.append(reg_outs)
 
         return outs
 
 
+if __name__ == "__main__":
+    head_ch = 32
+    reg_dict = {'hm': 1, 'of': 2, 'wh': 2}
+    backbone = Backbone(head_ch)
+    net = FpnNet(backbone, head_ch, reg_dict, one_feat_map=False)
+    x = torch.randn(1, 3, 640, 480)
+    
+    y = net(x)
+    for e in y:
+        print('==================')
+        for j in e:
+            print(j.shape)
