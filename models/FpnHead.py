@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch
-from common import ConvBn, ConvTransposeBn
+from models.common import ConvBn, ConvTransposeBn
 
 
 class UpSample(nn.Module):

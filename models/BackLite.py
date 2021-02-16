@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
-from common import ConvBn, DwConvBn
-from FpnHead import FpnHead
+from models.common import ConvBn, DwConvBn
+from models.FpnHead import FpnHead
 
 class Block(nn.Module):
     def __init__(self, in_c, out_c, s, res=False):
