@@ -24,6 +24,10 @@ train:
   epochs: 200
   lr: 0.02
   weight_decay: 0.0
+  loss_weights:
+    hm: 1
+    wh: 0.25
+    of: 1
   # scheduler ocp | multi_step
   scheduler: ocp
   ocp_params:
