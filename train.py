@@ -46,7 +46,7 @@ class Trainer:
         self.val_dataset = None
         print(f'Val dataset: {len(self.val_dataset)} samples')
 
-        self.criterion = AnchorFreeLoss(self.cfg)
+        self.criterion = AnchorFreeLoss(self.train_params)
 
         self.writer = Writer(self.paths['log_dir'])
         print('Tensorboard logs are saved to: {}'.format(self.paths['log_dir']))

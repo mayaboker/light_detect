@@ -1,11 +1,30 @@
 import torch.nn as nn
 import torch
 
+
+
+class RegL1Loss(nn.Module):
+    def __init__(self):
+        super(RegL1Loss, self).__init__()
+        self.loss = nn.SmoothL1Loss(reduction='sum')
+
+    def forward(self, pred, gt, mask=None):
+        if mask is not None:
+            pred = pred[mask]
+            gt = gt[mask]
+        num = pred.numel()
+        if num == 0:
+            return 0
+        loss = self.loss(pred, gt)
+        loss = loss / num
+        return loss
+        
+
 class ASLoss(nn.Module):
-    def __init__(self, gama_p=2, gama_n=4, margin=0.05, beta=4, use_negative_weights=True):
+    def __init__(self, gamma_p=2, gamma_n=4, margin=0.05, beta=4, use_negative_weights=True):
         super(ASLoss, self).__init__()
-        self.gama_p = gama_p
-        self.gama_n = gama_n
+        self.gamma_p = gamma_p
+        self.gamma_n = gamma_n
         self.marg = margin
         self.beta = beta
         self.use_negative_weights = use_negative_weights
@@ -23,8 +42,8 @@ class ASLoss(nn.Module):
 
         neg_pred = (pred - self.marg).clamp(min=self.eps)
 
-        pos_loss = torch.log(pred) * torch.pow(1 - pred, self.gama_p) * pos_inds
-        neg_loss = torch.log(1 - pred) * torch.pow(1 - pred, self.gama_n) * neg_weights * neg_inds
+        pos_loss = torch.log(pred) * torch.pow(1 - pred, self.gamma_p) * pos_inds
+        neg_loss = torch.log(1 - pred) * torch.pow(1 - pred, self.gamma_n) * neg_weights * neg_inds
 
         num_pos = pos_inds.float().sum()
         pos_loss = pos_loss.sum()
@@ -40,8 +59,8 @@ class ASLoss(nn.Module):
         
         return loss, torch.tensor([p_prob, n_prob])
 
-def FocalLoss(gama=2, beta=4, use_negative_weights=True):
-    return ASLoss(gama, gama, 0, beta, use_negative_weights)
+def FocalLoss(gamma=2, beta=4, use_negative_weights=True):
+    return ASLoss(gamma, gamma, 0, beta, use_negative_weights)
 
 
 if __name__ == "__main__":

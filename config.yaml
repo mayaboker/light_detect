@@ -24,12 +24,21 @@ train:
   epochs: 200
   lr: 0.02
   weight_decay: 0.0
+  #losses
   loss_weights:
     hm: 1
     wh: 0.25
     of: 1
-  # scheduler ocp | multi_step
-  scheduler: ocp
+  losses:
+    hm: asl     # asl | focal
+    wh: sl1     # sl1
+    of: sl1     # sl1
+  asl_params:
+    gamma_p: 2
+    gamma_n: 5
+    margin: 0.05
+  # scheduler 
+  scheduler: ocp  # ocp | multi_step
   ocp_params:
     max_lr_pct: 0.2
   multi_params:
