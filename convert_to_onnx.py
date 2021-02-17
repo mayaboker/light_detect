@@ -13,7 +13,7 @@ def multiple_names(out_names, torch_out, in_dims):
     for outs in torch_out:
         stride = in_dims[2] // outs[0].size(2)
         new_out_names += [f'{name}_s{stride}' for name in out_names]
-    return out_names
+    return new_out_names
 
 
 def create_dynamic_axes_dict(in_names, out_names):
@@ -42,6 +42,7 @@ def convert_to_onnx(model, path, onnx_name, in_dims=(1, 3, 800, 800), out_names=
     
     if not one_feat:
         out_names = multiple_names(out_names, torch_out, in_dims)
+        print(out_names)
     
     dynamic_axes = create_dynamic_axes_dict(in_names, out_names)
 
