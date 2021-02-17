@@ -5,6 +5,7 @@ import xmltodict, json
 import matplotlib.pyplot as plt
 import os 
 
+
 def parse_data(root):
     fnames_mgp = glob.glob(root + '/*.mpg')
     for fname in fnames_mgp:
@@ -17,8 +18,8 @@ def parse_data(root):
         cap = cv2.VideoCapture(fname.__str__())
         fps = cap.get(cv2.CAP_PROP_FPS)
         n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        h_frame = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        w_frame = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frames_path = Path(root) / folder_name[:-4]
         frames_path.mkdir(exist_ok=True)
     
@@ -31,15 +32,16 @@ def parse_data(root):
             if not ret:
                 break
             f = frames_path / (str(i).zfill(6) + '.png')
-            cv2.imwrite(f.__str__(), frame)        
+            frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_CLOCKWISE)
+            cv2.imwrite(f.__str__(), frame)
             i = i + 1
-        
-        # When everything done, release the capture
+            
         cap.release()
         cv2.destroyAllWindows()
 
         with open(fname_gt.__str__()) as xml_file:
             data_dict = xmltodict.parse(xml_file.read())
+
         xml_file.close()    
         data_dict = data_dict['dataset']['frame']
         gt = dict()
@@ -50,10 +52,11 @@ def parse_data(root):
                 if isinstance(obj, list):
                     bbox = [] 
                     for d in obj:
-                        w = int(d['box']['@w'])
-                        h = int(d['box']['@h'])
-                        xc = int(d['box']['@xc'])
-                        yc = int(d['box']['@yc'])
+                        '''rotate 90 deg'''
+                        h = int(d['box']['@w'])
+                        w = int(d['box']['@h'])
+                        yc = int(d['box']['@xc'])
+                        xc = h_frame-int(d['box']['@yc'])
                         id = int(d['@id'])
                         orientation = int(d['orientation'])
                         appearance = d['appearance']
@@ -64,8 +67,8 @@ def parse_data(root):
                     bbox = []
                     w = int(obj['box']['@w'])
                     h = int(obj['box']['@h'])
-                    xc = int(obj['box']['@xc'])
-                    yc = int(obj['box']['@yc'])
+                    yc = int(obj['box']['@xc'])
+                    xc = h_frame-int(obj['box']['@yc'])
                     id = int(obj['@id'])
                     orientation = int(obj['orientation'])
                     appearance = obj['appearance']
