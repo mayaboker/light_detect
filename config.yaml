@@ -1,0 +1,12 @@
+{% set converted_models = '../converted_models' %}
+
+paths:
+  converted_models: {{ converted_models }}
+
+net:
+  one_feat_map: True
+  head_channels: 24
+  channels_dict:
+    hm: 1
+    wh: 2
+    of: 2
