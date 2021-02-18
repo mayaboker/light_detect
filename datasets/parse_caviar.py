@@ -9,6 +9,7 @@ import os
 def parse_data(root):
     fnames_mgp = glob.glob(root + '/*.mpg')
     for fname in fnames_mgp:
+        print(fname)
         fname_gt = fname[:-4] + '.xml'
         folder_name = os.path.basename(fname)        
         #names = glob.glob(root + '/*.mpg')

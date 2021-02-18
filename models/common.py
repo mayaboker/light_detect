@@ -7,7 +7,8 @@ class ConvBn(nn.Module):
         super(ConvBn, self).__init__()
         p = k //2
         self.conv = nn.Sequential(
-            nn.Conv2d(in_c, out_c, kernel_size=k, stride=s, padding=p, bias=False),
+            nn.ReflectionPad2d(p),
+            nn.Conv2d(in_c, out_c, kernel_size=k, stride=s, padding=0, bias=False),
             nn.BatchNorm2d(out_c),
             nn.ReLU(inplace=True)
         )
@@ -17,7 +18,7 @@ class ConvBn(nn.Module):
 class ConvTransposeBn(nn.Module):
     def __init__(self, in_c, out_c, k, s):
         super(ConvTransposeBn, self).__init__()
-        self.conv = nn.Sequential(
+        self.conv = nn.Sequential(            
             nn.ConvTranspose2d(in_c, out_c, kernel_size=k, stride=s, padding=0, output_padding=0, bias=False),
             nn.BatchNorm2d(out_c),
             nn.ReLU(inplace=True)
@@ -30,7 +31,8 @@ class DwConvBn(nn.Module):
         super(DwConvBn, self).__init__()
         p = k //2
         self.conv = nn.Sequential(
-            nn.Conv2d(in_c, in_c, kernel_size=k, stride=s, padding=p, groups=in_c, bias=False),
+            nn.ReflectionPad2d(p),
+            nn.Conv2d(in_c, in_c, kernel_size=k, stride=s, padding=0, groups=in_c, bias=False),
             nn.BatchNorm2d(in_c),
             nn.ReLU(inplace=True)
         )
@@ -44,6 +46,7 @@ class MaxPoolNms(nn.Module):
         self.padding = (kernel -1) // 2
     
     def forward(self, x):
-        hmax = F.max_pool2d(x, self.kernel, stride=1, padding=padding)
+        hmax = F.max_pool2d(x, self.kernel, stride=1, padding=self.padding)
         keep = torch.floor(x - hmax + 1)
         return x * keep
+

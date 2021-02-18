@@ -9,6 +9,7 @@ paths:
   log_dir: {{ log_dir }}/{{ exp_name }}/logs
   converted_models: {{ converted_models }}
   update_interval: 20
+  data: /home/core4/data/CAVIAR/Browse1
 
 net:
   one_feat_map: False
@@ -47,7 +48,7 @@ train:
 
   val_rate: 3     # rate of validation: epochs % val_rate 
   test_rate: 2    # rate of test: epochs % (val_rate * test_rate)
-  num_workers: 4
+  num_workers: 0
   pin_memory: True
 
   transforms:

@@ -11,7 +11,7 @@ import json
 
 class CAVIARDataset(torch.utils.data.Dataset):
     def __init__(self, root, augment=None):
-        self.augment = augment 
+        self.augment = augment
         f_data = root + '_gt.json'
         with open(f_data, 'r') as f:
             data = json.load(f)
@@ -20,13 +20,13 @@ class CAVIARDataset(torch.utils.data.Dataset):
         for i, k in enumerate(data.keys()):
             self.f_imgs.append(os.path.join(root, data[k]['img_name']))
             l = data[k]['bbox']
-            self.labels.append([ll[:5] for ll in l])
+            self.labels.append([ll[:4] for ll in l])
                 
     def __getitem__(self, index):        
         img = Image.open(self.f_imgs[index])
         label = self.labels[index]
         if self.augment:
-            pass
+            img = self.augment(img)
         return img, label
 
     def __len__(self):

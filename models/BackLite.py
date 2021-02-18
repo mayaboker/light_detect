@@ -79,8 +79,8 @@ class Backbone(nn.Module):
 
 
 if __name__ == "__main__":
-    model = Backbone(32)
-    x = torch.randn(1, 3, 640, 480)
+    model = Backbone(32)    
+    x = torch.randn(1, 3, 288, 384)
     y = model(x)
     for e in y:
         print(e.shape)
