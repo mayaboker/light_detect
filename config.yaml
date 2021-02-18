@@ -1,4 +1,5 @@
 {% set converted_models = '../converted_models' %}
+{% set data_dir = '../CAVIAR/Browse1' %}
 {% set log_dir = '../logs' %}
 {% set exp_name = 'test' %}
 
@@ -9,19 +10,19 @@ paths:
   log_dir: {{ log_dir }}/{{ exp_name }}/logs
   converted_models: {{ converted_models }}
   update_interval: 20
-  data: /home/core4/data/CAVIAR/Browse1
+  data_dir: {{ data_dir }}
 
 net:
-  one_feat_map: False
+  one_feat_map: True
   head_channels: 24
   channels_dict:
     hm: 1
     wh: 2
     of: 2
 
-train:
+train:    
   mixed_precision: True
-  batch_size: 32
+  batch_size: 64
   epochs: 200
   lr: 0.02
   weight_decay: 0.0
@@ -52,4 +53,4 @@ train:
   pin_memory: True
 
   transforms:
-    a: 0
+    in_size: [320, 320]

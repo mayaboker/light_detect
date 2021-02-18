@@ -43,7 +43,7 @@ class ASLoss(nn.Module):
         neg_pred = (pred - self.marg).clamp(min=self.eps)
 
         pos_loss = torch.log(pred) * torch.pow(1 - pred, self.gamma_p) * pos_inds
-        neg_loss = torch.log(1 - pred) * torch.pow(1 - pred, self.gamma_n) * neg_weights * neg_inds
+        neg_loss = torch.log(1 - neg_pred) * torch.pow(neg_pred, self.gamma_n) * neg_weights * neg_inds
 
         num_pos = pos_inds.float().sum()
         pos_loss = pos_loss.sum()

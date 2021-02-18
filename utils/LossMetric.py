@@ -12,7 +12,7 @@ class LossMetric:
 
     def add_sample(self, loss_dict):
         for key in loss_dict.keys():
-            self.losses[key] += loss_dict[key].items()
+            self.losses[key] += loss_dict[key].item()
         self.step += 1
 
     def get_avg_losses(self, flush=True):

@@ -42,14 +42,14 @@ class AnchorFreeLoss(nn.Module):
         probes = torch.zeros(2)
         num_maps = len(out)
         for stride_out, stride_labels in zip(out, labels):
-            hm_loss, ps = self.heatmap_loss(stride_out[0], stride_labels[0])
+            hm_loss, ps = self.heatmap_loss(stride_out[0], stride_labels[:, 0].view_as(stride_out[0]))
             losses['hm'] += hm_loss
             probes += ps 
 
-            pos_mask = stride_labels[0].eq(1)
-            pos_mask = pos_mask.expand_as(stride_labels[1])
-            losses['wh'] += self.scale_loss(stride_out[1], stride_labels[1], mask=pos_mask)
-            losses['of'] += self.offset_loss(stride_out[2], stride_labels[2], mask=pos_mask)
+            pos_mask = stride_labels[:, 0].eq(1).view_as(stride_out[0])
+            pos_mask = pos_mask.expand(-1, 2, pos_mask.size(2), pos_mask.size(3))
+            losses['wh'] += self.scale_loss(stride_out[1], stride_labels[:, 1:3], mask=pos_mask)
+            losses['of'] += self.offset_loss(stride_out[2], stride_labels[:, 3:5], mask=pos_mask)
 
         probes /= num_maps
         for key in losses.keys():
@@ -58,20 +58,20 @@ class AnchorFreeLoss(nn.Module):
         return losses, probes
 
 
-if __name__ == "__main__":
-    from utils.utils import load_yaml
-    from factory import get_fpn_net
+# if __name__ == "__main__":
+#     from utils.utils import load_yaml
+#     from factory import get_fpn_net
     
-    cfg = load_yaml('config.yaml')
-    net = get_fpn_net(cfg['net'])
+#     cfg = load_yaml('config.yaml')
+#     net = get_fpn_net(cfg['net'])
 
-    x1 = torch.randn(4, 3, 320, 320)
-    x2 = torch.randn(4, 3, 320, 320)
+#     x1 = torch.randn(4, 3, 320, 320)
+#     x2 = torch.randn(4, 3, 320, 320)
 
-    out1 = net(x1)
-    out2 = net(x2)
+#     out1 = net(x1)
+#     out2 = net(x2)
 
-    crit = AnchorFreeLoss(cfg['train'])
+#     crit = AnchorFreeLoss(cfg['train'])
 
-    losses, probs = crit(out1, out2)
-    print(losses, probs)
+#     losses, probs = crit(out1, out2)
+#     print(losses, probs)

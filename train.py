@@ -44,10 +44,10 @@ class Trainer:
         self.scaler = GradScaler() if self.use_amp else None
 
         # data setup
-        # TODO - add datasets
-        self.train_dataset = Dataset(self.paths['data'], augment=get_train_transforms())
+        # TODO - add val datasets
+        self.train_dataset = Dataset(self.paths['data_dir'], augment=get_train_transforms(self.trans_params))
         print(f'Train dataset: {len(self.train_dataset)} samples')
-        self.val_dataset = Dataset(self.paths['data'])
+        self.val_dataset = Dataset(self.paths['data_dir'], augment=get_train_transforms(self.trans_params))
         print(f'Val dataset: {len(self.val_dataset)} samples')
 
         self.criterion = AnchorFreeLoss(self.train_params)
@@ -143,8 +143,8 @@ class Trainer:
         
         for mini_batch_i, read_mini_batch in tqdm(enumerate(loader), desc=f'Epoch {epoch}:', ascii=True, total=len(loader)):
             data, labels = read_mini_batch
-            data.cuda()
-            labels.cuda()
+            data = data.cuda()
+            labels = [label.cuda() for label in labels]
 
             with amp.autocast():
                 out = net(data)
