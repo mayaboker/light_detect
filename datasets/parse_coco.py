@@ -36,4 +36,3 @@ if __name__ == '__main__':
     annotations_file = r'/home/kobi/PycharmProjects/vehicle_recognition_coco/annotations/instances_train2017.json'
     subimages_file = r"/home/kobi/PycharmProjects/vehicle_recognition_coco/subdataset images"
     coco = COCODataset(annotations_file, subimages_file)
-    print('hi')
