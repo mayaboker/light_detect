@@ -11,6 +11,7 @@ import torch
 import torch.cuda.amp as amp
 from torch.cuda.amp.grad_scaler import GradScaler
 from torch.utils.data import DataLoader
+import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR, OneCycleLR
 
 from transformations import get_train_transforms
@@ -20,6 +21,9 @@ from utils.log_utils import Writer
 from factory import get_fpn_net
 
 from losses.AnchorFreeloss import AnchorFreeLoss
+from datasets.CAVIARDataset import CAVIARDataset as Dataset
+
+from utils.LossMetric import LossMetric
 
 class Trainer:
     def __init__(self,cfg):
@@ -40,13 +44,13 @@ class Trainer:
         self.scaler = GradScaler() if self.use_amp else None
 
         # data setup
-        # TODO - add datasets
-        self.train_dataset = None
+        # TODO - add val datasets
+        self.train_dataset = Dataset(self.paths['data_dir'], augment=get_train_transforms(self.trans_params))
         print(f'Train dataset: {len(self.train_dataset)} samples')
-        self.val_dataset = None
+        self.val_dataset = Dataset(self.paths['data_dir'], augment=get_train_transforms(self.trans_params))
         print(f'Val dataset: {len(self.val_dataset)} samples')
 
-        self.criterion = AnchorFreeLoss(self.cfg)
+        self.criterion = AnchorFreeLoss(self.train_params)
 
         self.writer = Writer(self.paths['log_dir'])
         print('Tensorboard logs are saved to: {}'.format(self.paths['log_dir']))
@@ -92,14 +96,14 @@ class Trainer:
         epochs = self.train_params['epochs']
         weight_decay = self.train_params['weight_decay']
 
-        self.optimizer = optim.Adam(net.parameters, lr=lr, weight_decay=weight_decay, eps=1e-4)
+        self.optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay, eps=1e-4)
 
         first_epoch = 0
         # scheduler 
         if self.sched_type == 'ocp':
             last_epoch = -1 if first_epoch == 0 else first_epoch*len(train_loader)
             self.scheduler = OneCycleLR(
-                optimizer,
+                self.optimizer,
                 max_lr=lr,
                 epochs=epochs,
                 last_epoch=last_epoch,
@@ -108,7 +112,7 @@ class Trainer:
             )
         elif self.sched_type == 'multi_step':
             self.scheduler = MultiStepLR(
-                optimizer,
+                self.optimizer,
                 milestones=self.train_params['multi_params']['milestones'],
                 gamma=self.train_params['multi_params']['gamma'],
                 last_epoch=first_epoch
@@ -139,8 +143,8 @@ class Trainer:
         
         for mini_batch_i, read_mini_batch in tqdm(enumerate(loader), desc=f'Epoch {epoch}:', ascii=True, total=len(loader)):
             data, labels = read_mini_batch
-            data.cuda()
-            labels.cuda()
+            data = data.cuda()
+            labels = [label.cuda() for label in labels]
 
             with amp.autocast():
                 out = net(data)
@@ -148,7 +152,7 @@ class Trainer:
                 loss = loss_metric.calculate_loss(loss_dict)
             self.optimizer.zero_grad()
             self.scaler.scale(loss).backward()
-            self.scaler.step(optimizer)
+            self.scaler.step(self.optimizer)
             self.scaler.update()
 
             probs.update(hm_probs)
@@ -166,7 +170,7 @@ class Trainer:
 
 
 if __name__ == "__main__":
-    parser = argparse.parse_args()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-gpu", type=int, default=0, help='gpu to run on.')
 
     args = parser.parse_args()
