@@ -21,7 +21,8 @@ from utils.log_utils import Writer
 from factory import get_fpn_net
 
 from losses.AnchorFreeloss import AnchorFreeLoss
-from datasets.CAVIARDataset import CAVIARDataset as Dataset
+from datasets.parse_coco import COCODataset as Dataset
+#from datasets.CAVIARDataset import CAVIARDataset as Dataset
 
 from utils.LossMetric import LossMetric
 

@@ -1,5 +1,5 @@
 {% set converted_models = '../converted_models' %}
-{% set data_dir = '../CAVIAR/Browse1' %}
+{% set data_dir = '../annotations' %}
 {% set log_dir = '../logs' %}
 {% set exp_name = 'test' %}
 
