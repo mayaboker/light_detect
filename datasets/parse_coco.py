@@ -7,6 +7,8 @@ import numpy as np
 from utils.image_utils import gaussian_radius, draw_umich_gaussian
 import math
 import cv2
+import time
+
 
 '''
 class COCODataset(Dataset):
@@ -86,16 +88,19 @@ class COCODataset(Dataset):
         return img, heatmaps
     
     def load_image(self, path):
-        img = Image.open(path)
+        img = Image.open(path)        
         # TODO : taking care of no channels situation
-        # if len(img.size) < 3:
-        #     img = np.array(img, dtype=np.float)
+        img = np.array(img)
+        if len(img.shape) < 3:            
+            start_time = time.time()
+            img = np.repeat(img[:, :, np.newaxis], 3, axis=2)            
+           # cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
         #     img_expand = np.expand_dims(img, axis=0)
         #     img_expand[0] = img
         #     img_expand[1] = img
         #     img_expand[2] = im
 
-        return np.array(img, dtype=np.float)
+        return img
     
     def make_heatmaps(self, im, bboxes, stride):
         height, width = im.size()[1:]
