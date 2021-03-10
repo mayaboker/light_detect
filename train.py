@@ -59,6 +59,14 @@ class Trainer:
         self.scheduler = None
         self.optimizer = None
 
+    def save_checkpoints(self, epoch, net):
+        path = osp.join(self.checkpoints, f'Epoch_{epoch}.pth')
+        torch.save({
+            'epoch': epoch,
+            'net_state_dict': net.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict() 
+        }, path)
+
     def train(self):
         torch.backends.cudnn.benchmark = True
         torch.backends.cudnn.deterministic = True
@@ -134,6 +142,10 @@ class Trainer:
             if (epoch + 1) % val_rate == 0 or epoch == epochs -1:
                 # TODO - eval and test
                 pass
+            if (epoch + 1) % (val_rate * test_rate) == 0 or epoch == epochs -1:
+                # TODO - eval and test
+                self.save_checkpoints(epoch, net)
+
 
     def train_epoch(self, net, loader, epoch):
         net.train()

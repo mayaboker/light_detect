@@ -57,21 +57,3 @@ class AnchorFreeLoss(nn.Module):
 
         return losses, probes
 
-
-# if __name__ == "__main__":
-#     from utils.utils import load_yaml
-#     from factory import get_fpn_net
-    
-#     cfg = load_yaml('config.yaml')
-#     net = get_fpn_net(cfg['net'])
-
-#     x1 = torch.randn(4, 3, 320, 320)
-#     x2 = torch.randn(4, 3, 320, 320)
-
-#     out1 = net(x1)
-#     out2 = net(x2)
-
-#     crit = AnchorFreeLoss(cfg['train'])
-
-#     losses, probs = crit(out1, out2)
-#     print(losses, probs)

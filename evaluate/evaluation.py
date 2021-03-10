@@ -12,7 +12,7 @@ import pickle
 import argparse
 import numpy as np
 from scipy.io import loadmat
-from bbox import bbox_overlaps
+from evaluate.bbox import bbox_overlaps
 from IPython import embed
 
 
@@ -132,7 +132,7 @@ def norm_score(pred):
             v[:, -1] = (v[:, -1] - min_score)/diff
 
 
-def image_eval(pred, gt, ignore, iou_thresh):
+def image_eval(pred, gt, ignore, iou_thresh, box_format='xywh'):
     """ single image evaluation
     pred: Nx5
     gt: Nx4
@@ -146,8 +146,9 @@ def image_eval(pred, gt, ignore, iou_thresh):
 
     _pred[:, 2] = _pred[:, 2] + _pred[:, 0]
     _pred[:, 3] = _pred[:, 3] + _pred[:, 1]
-    _gt[:, 2] = _gt[:, 2] + _gt[:, 0]
-    _gt[:, 3] = _gt[:, 3] + _gt[:, 1]
+    if box_format == 'xywh':
+        _gt[:, 2] = _gt[:, 2] + _gt[:, 0]
+        _gt[:, 3] = _gt[:, 3] + _gt[:, 1]
 
     overlaps = bbox_overlaps(_pred[:, :4], _gt)
 

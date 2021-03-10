@@ -1,8 +1,7 @@
 {% set converted_models = '../converted_models' %}
 {% set data_dir = '../CAVIAR/Browse1' %}
 {% set log_dir = '../logs' %}
-{% set exp_name = 'test' %}
-
+{% set exp_name = 'test2' %}
 
 
 paths:
@@ -14,6 +13,7 @@ paths:
 
 net:
   one_feat_map: True
+  strides: [4]
   head_channels: 24
   channels_dict:
     hm: 1
@@ -54,3 +54,4 @@ train:
 
   transforms:
     in_size: [320, 320]
+    min_box: 10
