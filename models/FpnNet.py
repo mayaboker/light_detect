@@ -52,15 +52,14 @@ class FpnNet(nn.Module):
 
 
 if __name__ == "__main__":
-    pass
-    # head_ch = 32
-    # reg_dict = {'hm': 1, 'of': 2, 'wh': 2}
-    # backbone = Backbone(head_ch)
-    # net = FpnNet(backbone, head_ch, reg_dict, one_feat_map=False)
-    # x = torch.randn(1, 3, 640, 480)
+    head_ch = 32
+    reg_dict = {'hm': 1, 'of': 2, 'wh': 2}
+    backbone = Backbone(head_ch)#Backbone(head_ch)
+    net = FpnNet(backbone, head_ch, reg_dict, one_feat_map=False)
+    x = torch.randn(1, 3, 640, 480)
     
-    # y = net(x)
-    # for e in y:
-    #     print('==================')
-    #     for j in e:
-    #         print(j.shape)
+    y = net(x)
+    for e in y:
+        print('==================')
+        for j in e:
+            print(j.shape)

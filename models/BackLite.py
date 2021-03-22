@@ -8,8 +8,8 @@ class Block(nn.Module):
         super(Block, self).__init__()
         self.res = res
         self.block = nn.Sequential(
-            ConvBn(in_c, out_c, 1, s),
-            DwConvBn(out_c, 3)
+            ConvBn(in_c, out_c, 1, 1),
+            DwConvBn(out_c, 3, s=s),            
         )
 
     def forward(self, x):
@@ -80,7 +80,7 @@ class Backbone(nn.Module):
 
 if __name__ == "__main__":
     model = Backbone(32)    
-    x = torch.randn(1, 3, 288, 384)
+    x = torch.randn(2, 3, 320, 320)
     y = model(x)
     for e in y:
         print(e.shape)

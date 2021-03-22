@@ -6,7 +6,7 @@ from api import decode
 from evaluate.evaluation import image_eval, img_pr_info, dataset_pr_info, voc_ap
 from datasets.dataset_utils import test_collate_fn
 
-def test(net, dataset, heads=None, batch_size=8):
+def test(net, dataset, batch_size=32):
     net.eval()
 
     strides = dataset.strides
@@ -16,7 +16,7 @@ def test(net, dataset, heads=None, batch_size=8):
         batch_size=batch_size,
         pin_memory=True,
         num_workers=4,
-        shuffle=True,
+        shuffle=False,
         collate_fn=test_collate_fn
     )
 
@@ -65,17 +65,13 @@ if __name__ == "__main__":
     from transformations import get_test_transforms
     from factory import get_fpn_net
 
-    cfg = load_yaml('config.yaml')
+    cfg = load_yaml('config_eval.yaml')
     dataset = CAVIARDataset(cfg['paths']['data_dir'], augment=get_test_transforms(cfg['train']['transforms']), mode='test', strides=cfg['net']['strides'])
 
     net = get_fpn_net(cfg['net'])
     net.cuda()
 
-    sd = torch.load('../logs/test2/checkpoints/Epoch_199.pth')['net_state_dict']
+    sd = torch.load('../logs/test3/checkpoints/Epoch_257.pth')['net_state_dict']
     net.load_state_dict(sd)
-
     ap = test(net, dataset)
-    print(ap)
-
-
-        
+    print(ap) 

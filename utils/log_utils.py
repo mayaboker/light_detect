@@ -14,6 +14,17 @@ class Writer:
         total = loss_metric.calculate_loss(losses)
         self.writer.add_scalars('Loss/total', {'train': total}, step)
 
+    def log_eval(self, step, loss_metric):
+        losses = loss_metric.get_avg_losses(flush=True)
+        for key in losses.keys():
+            self.writer.add_scalars(f'Loss/{key}', {'val': losses[key]}, step)
+        total = loss_metric.calculate_loss(losses)
+        self.writer.add_scalars('Loss/total', {'val': total}, step)
+
+    def log_ap(self, step, ap):
+        print(f'AP:\t {ap}')
+        self.writer.add_scalar('test_ap', ap, step)
+
     def log_probs(self, step, probs):
         self.writer.add_scalars('probs', {'p': probs[0]}, step)
         self.writer.add_scalars('probs', {'n': probs[1]}, step)

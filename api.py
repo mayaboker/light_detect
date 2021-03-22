@@ -10,8 +10,8 @@ def decode(net_outputs, strides, threshold, K, nms_type='union'):
     all_scores = torch.Tensor([]).cuda()
     for output, stride in zip(net_outputs, strides):
         hm = output[0]
-        wh = output[1]
-        of = output[2]
+        of = output[1]
+        wh = output[2]
 
         batch, classes, height, width = hm.size()
         scores, inds, clses, ys, xs = _topk(hm, K)
@@ -27,7 +27,7 @@ def decode(net_outputs, strides, threshold, K, nms_type='union'):
         wh = wh.view(batch, K, 2)
         wh = torch.exp(wh)
 
-        print(clses.shape, scores.shape)
+        #print(clses.shape, scores.shape)
         # clses = clses.view(batch, K, 1).float()
         # scores = scores.view(batch, K, 1)
 
