@@ -21,15 +21,15 @@ class COCODataset(Dataset):
                 self.labels.append(same_id_samples)
         self.transforms = transforms
 
-    def __len__(self):
-        return len(self.labels)
-
     def __getitem__(self, index):
         labels = self.labels[index]
         img = Image.open(self.f_imgs[index])
         if self.transforms is not None:
             img = self.transforms(img)
         return img, labels
+
+    def __len__(self):
+        return len(self.labels)
 
 
 if __name__ == '__main__':

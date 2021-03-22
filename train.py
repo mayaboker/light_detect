@@ -14,7 +14,8 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR, OneCycleLR
 
-from transformations import get_train_transforms
+from transformations import get_train_transforms, get_val_transforms, get_test_transforms
+from eval import test
 from utils.utils import load_yaml, ProbsAverageMeter
 from utils.log_utils import Writer
 
@@ -47,8 +48,9 @@ class Trainer:
         # TODO - add val datasets
         self.train_dataset = Dataset(self.paths['data_dir'], augment=get_train_transforms(self.trans_params))
         print(f'Train dataset: {len(self.train_dataset)} samples')
-        self.val_dataset = Dataset(self.paths['data_dir'], augment=get_train_transforms(self.trans_params))
+        self.val_dataset = Dataset(self.paths['data_dir'], augment=get_val_transforms(self.trans_params), mode='val')
         print(f'Val dataset: {len(self.val_dataset)} samples')
+        self.test_dataset = Dataset(self.paths['data_dir'], augment=get_test_transforms(self.trans_params), mode='test')
 
         self.criterion = AnchorFreeLoss(self.train_params)
 
@@ -140,16 +142,14 @@ class Trainer:
                 self.scheduler.step()
 
             if (epoch + 1) % val_rate == 0 or epoch == epochs -1:
-                # TODO - eval and test
-                pass
+                self.eval(net, val_loader, (epoch+1) * len(train_loader))
             if (epoch + 1) % (val_rate * test_rate) == 0 or epoch == epochs -1:
-                # TODO - eval and test
+                self.test_ap(net, epoch)
                 self.save_checkpoints(epoch, net)
 
 
     def train_epoch(self, net, loader, epoch):
         net.train()
-        # TODO = LossMetric class
         loss_metric = LossMetric(self.cfg)
         probs = ProbsAverageMeter()
         
@@ -178,6 +178,27 @@ class Trainer:
             if mini_batch_i % self.update_interval == 0:
                 self.writer.log_training(epoch * len(loader) + mini_batch_i, loss_metric)
         self.writer.log_probs(epoch, probs.get_average())
+
+    def eval(self, net, loader, step):
+        net.eval()
+        loss_metric = LossMetric(self.cfg)
+        with torch.no_grad():
+            for mini_batch_i, read_mini_batch in tqdm(enumerate(loader), desc=f'Val:', ascii=True, total=len(loader)):
+                data, labels = read_mini_batch
+                data = data.cuda()
+                labels = [label.cuda() for label in labels]            
+                with amp.autocast():
+                    out = net(data)
+                    loss_dict, _ = self.criterion(out, labels)
+                    # loss = loss_metric.calculate_loss(loss_dict)                                                                
+
+                loss_metric.add_sample(loss_dict)
+                
+            self.writer.log_eval(step, loss_metric)       
+
+    def test_ap(self, net, epoch):
+        ap = test(net, self.test_dataset)
+        self.writer.log_ap(epoch + 1, ap)
 
 
 

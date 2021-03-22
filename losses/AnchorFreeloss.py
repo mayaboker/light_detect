@@ -47,9 +47,9 @@ class AnchorFreeLoss(nn.Module):
             probes += ps 
 
             pos_mask = stride_labels[:, 0].eq(1).view_as(stride_out[0])
-            pos_mask = pos_mask.expand(-1, 2, pos_mask.size(2), pos_mask.size(3))
-            losses['wh'] += self.scale_loss(stride_out[1], stride_labels[:, 1:3], mask=pos_mask)
-            losses['of'] += self.offset_loss(stride_out[2], stride_labels[:, 3:5], mask=pos_mask)
+            pos_mask = pos_mask.expand(-1, 2, pos_mask.size(2), pos_mask.size(3))            
+            losses['of'] += self.offset_loss(stride_out[1], stride_labels[:, 1:3], mask=pos_mask)
+            losses['wh'] += self.scale_loss(stride_out[2], stride_labels[:, 3:5], mask=pos_mask)
 
         probes /= num_maps
         for key in losses.keys():

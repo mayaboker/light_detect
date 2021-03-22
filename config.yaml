@@ -1,7 +1,7 @@
 {% set converted_models = '../converted_models' %}
-{% set data_dir = '../CAVIAR/Browse1' %}
+{% set data_dir = '/home/core4/data/CAVIAR' %}
 {% set log_dir = '../logs' %}
-{% set exp_name = 'test2' %}
+{% set exp_name = 'test1' %}
 
 
 paths:
@@ -23,7 +23,7 @@ net:
 train:    
   mixed_precision: True
   batch_size: 64
-  epochs: 200
+  epochs: 100
   lr: 0.02
   weight_decay: 0.0
   #losses
@@ -47,8 +47,8 @@ train:
     milestones: []
     gamma: 0.1
 
-  val_rate: 3     # rate of validation: epochs % val_rate 
-  test_rate: 2    # rate of test: epochs % (val_rate * test_rate)
+  val_rate: 2     # rate of validation: epochs % val_rate 
+  test_rate: 1    # rate of test: epochs % (val_rate * test_rate)
   num_workers: 0
   pin_memory: True
 

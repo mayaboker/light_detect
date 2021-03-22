@@ -7,8 +7,8 @@ import os
 
 
 def parse_data(root):
-    fnames_mgp = glob.glob(root + '/*.mpg')
-    for fname in fnames_mgp:
+    fnames_mgp = sorted(glob.glob(root + '/*.mpg'))
+    for fname in fnames_mgp:                                               
         print(fname)
         fname_gt = fname[:-4] + '.xml'
         folder_name = os.path.basename(fname)        
@@ -51,7 +51,7 @@ def parse_data(root):
                 frame_id = int(v['@number'])
                 obj = v['objectlist']['object']
                 if isinstance(obj, list):
-                    bbox = [] 
+                    bbox = []
                     for d in obj:
                         '''rotate 90 deg'''
                         h = int(d['box']['@w'])
@@ -61,21 +61,33 @@ def parse_data(root):
                         id = int(d['@id'])
                         orientation = int(d['orientation'])
                         appearance = d['appearance']
-                        bbox.append([xc-w/2, yc-h/2, xc+w/2, yc+h/2, id, orientation, appearance])
-                    img_name = str(frame_id).zfill(6) + '.png'
-                    gt[str(frame_id)] = {'bbox': bbox, 'img_name': img_name}
+                        x_min = int(max(xc-w/2, 0))
+                        y_min = int(max(yc-h/2, 0))
+                        x_max = int(min(xc+w/2, w_frame))
+                        y_max = int(min(yc+h/2, h_frame))
+                        if x_min >= x_max or y_min >= y_max:
+                            continue
+                        bbox.append([x_min, y_min, x_max, y_max, id, orientation, appearance])
+                    img_name = folder_name[:-4] + '/' + str(frame_id).zfill(6) + '.png'
+                    gt[img_name] = {'bbox': bbox, 'img_name': img_name}
                 else:
                     bbox = []
-                    w = int(obj['box']['@w'])
-                    h = int(obj['box']['@h'])
+                    h = int(obj['box']['@w'])
+                    w = int(obj['box']['@h'])
                     yc = int(obj['box']['@xc'])
                     xc = h_frame-int(obj['box']['@yc'])
                     id = int(obj['@id'])
                     orientation = int(obj['orientation'])
                     appearance = obj['appearance']
-                    bbox.append([xc-w/2, yc-h/2, xc+w/2, yc+h/2, id, orientation, appearance])
-                    img_name = str(frame_id).zfill(6) + '.png'
-                    gt[str(frame_id)] = {'bbox': bbox, 'img_name': img_name}
+                    x_min = int(max(xc-w/2, 0))
+                    y_min = int(max(yc-h/2, 0))
+                    x_max = int(min(xc+w/2, w_frame))
+                    y_max = int(min(yc+h/2, h_frame))
+                    if x_min >= x_max or y_min >= y_max:
+                        continue
+                    bbox.append([x_min, y_min, x_max, y_max, id, orientation, appearance])
+                    img_name = folder_name[:-4] + '/' + str(frame_id).zfill(6) + '.png'
+                    gt[img_name] = {'bbox': bbox, 'img_name': img_name}
         
         #img = cv2.imread((frames_path / gt['50']['img_name']).__str__())
         #bbox = gt['50']['bbox'][0]

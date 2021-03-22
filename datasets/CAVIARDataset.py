@@ -9,14 +9,22 @@ from PIL import Image
 import json
 from datasets.dataset_utils import make_heatmaps
 
-
 class CAVIARDataset(torch.utils.data.Dataset):
     def __init__(self, root, augment, strides=(4,), mode='train'):
         self.strides = strides
         self.augment = augment
         self.mode = mode
 
-        f_data = root + '_gt.json'
+        if mode == 'train':
+            root = os.path.join(root, 'train')
+            f_data = root + '/' + 'train_gt.json'
+        elif mode == 'val':
+            root = os.path.join(root, 'val')
+            f_data = root + '/' + 'val_gt.json'
+        elif mode == 'test':
+            root = os.path.join(root, 'val')
+            f_data = root + '/' + 'val_gt.json'
+
         with open(f_data, 'r') as f:
             data = json.load(f)
 
@@ -34,14 +42,14 @@ class CAVIARDataset(torch.utils.data.Dataset):
         if self.mode == 'test':
             transformed = self.augment(image=img, bboxes=labels)
             img = transformed['image']
-            labels = transformed['bboxes']
+            labels = transformed['bboxes']            
             return img, np.array(labels)
             
-        else:
-            transformed = self.augment(image=img, bboxes=labels)
+        else:            
+            transformed = self.augment(image=img, bboxes=labels)            
             img = transformed['image']
-            labels = transformed['bboxes']
-        
+            labels = transformed['bboxes']            
+
             heatmaps = []
             for stride in self.strides:
                 heatmaps.append(make_heatmaps(img, labels, stride))
@@ -62,21 +70,36 @@ if __name__ == "__main__":
     cfg = load_yaml('config.yaml')
     root = cfg['paths']['data_dir']
     D = CAVIARDataset(root, augment=get_train_transforms(cfg['train']['transforms']))
-
-    img, hms = D[20]
     
+    img, hms = next(iter(D))
+
     import matplotlib.pyplot as plt
     import cv2
+    from api import decode
+    from torchvision.transforms.functional import to_pil_image
+
     show = np.zeros([hms[0].shape[1], hms[0].shape[2], 3])
     show[:, :, 0] = hms[0][0]
-    show = cv2.resize(show, (640, 640))
-    img = img.permute(1, 2, 0).numpy()
-    img = cv2.resize(img, (640, 640))
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    show = img + show
-
+    #show = cv2.resize(show, (640, 640))
+    #img = img.permute(1, 2, 0).numpy()
+    #img = cv2.resize(img, (640, 640))
+    #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    show = np.array(to_pil_image(img))
+    #show = img# + show
+    hm = torch.Tensor(hms[0][0]).unsqueeze(0).unsqueeze(0).float().cuda()
+    of = torch.Tensor(hms[0][1:3]).unsqueeze(0).float().cuda()
+    wh = torch.Tensor(hms[0][3:5]).unsqueeze(0).float().cuda()    
+    out = [[hm, of, wh]]
+    boxes, scores = decode(out, [4], 0.15, K=100)
     plt.imshow(show, cmap='hot', interpolation='nearest')
-    plt.savefig('heatmap.png')
+    for i, l in enumerate(boxes[0]):
+        if i < 3:
+            show = cv2.rectangle(show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (255, 0, 0), 1)    
+    plt.imshow(show)
+    plt.show()
+
+    
+    #plt.savefig('heatmap.png')
     
     # while True:
     #     img, labels = next(iter(D))

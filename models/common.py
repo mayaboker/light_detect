@@ -7,8 +7,7 @@ class ConvBn(nn.Module):
         super(ConvBn, self).__init__()
         p = k //2
         self.conv = nn.Sequential(
-            nn.ReflectionPad2d(p),
-            nn.Conv2d(in_c, out_c, kernel_size=k, stride=s, padding=0, bias=False),
+            nn.Conv2d(in_c, out_c, kernel_size=k, stride=s, padding=p, bias=False),
             nn.BatchNorm2d(out_c),
             nn.ReLU(inplace=True)
         )
@@ -31,8 +30,8 @@ class DwConvBn(nn.Module):
         super(DwConvBn, self).__init__()
         p = k //2
         self.conv = nn.Sequential(
-            nn.ReflectionPad2d(p),
-            nn.Conv2d(in_c, in_c, kernel_size=k, stride=s, padding=0, groups=in_c, bias=False),
+            #nn.ReflectionPad2d(p),
+            nn.Conv2d(in_c, in_c, kernel_size=k, stride=s, padding=p, groups=in_c, bias=False),
             nn.BatchNorm2d(in_c),
             nn.ReLU(inplace=True)
         )
