@@ -1,10 +1,8 @@
-import torch.nn as nn
-import torch
-from models.common import ConvBn
-from models.FpnHead import FpnHead
-from models.BackLite import Backbone
+import tensorflow as tf
+from models.tf.FpnHead import FpnHead
 
-class FpnNet(nn.Module):
+
+class FpnNet(tf.keras.Model):
     def __init__(self, backbone, head_ch, reg_dict, upsample_mode='interpolate', one_feat_map=True):
         super(FpnNet, self).__init__()
         self.head_ch = head_ch
@@ -15,28 +13,27 @@ class FpnNet(nn.Module):
         self.fpn = FpnHead(head_ch, num_laterals, upsample_mode=upsample_mode, one_feat_map=one_feat_map)
         
         self.num_maps = 1 if one_feat_map else num_laterals
-        self.reg_heads = nn.ModuleList([
+        self.reg_heads = [
             self.build_regression_head() for _ in range(self.num_maps)
-        ])
+        ]
        
             
     def build_regression_head(self):
-        reg_head_dict = nn.ModuleDict()
+        reg_head_dict = {}
         for head, num_channels in self.reg_dict.items():
-            m_head = []
-            m_head.append(
-                nn.Conv2d(self.head_ch, num_channels, kernel_size=1, stride=1, bias=True)
-            )
+            m_head = tf.keras.Sequential()
+            activation = None
             if head == 'hm':
-                m_head.append(
-                    nn.Sigmoid()
-                )
-            reg_head_dict[head] = nn.Sequential(*m_head)
+                activation = 'sigmoid'
+            m_head.add(
+                tf.keras.layers.Conv2D(filters=num_channels, kernel_size=1, strides=1, use_bias=True, activation=activation)
+            )            
+            reg_head_dict[head] = m_head
 
         return reg_head_dict
             
 
-    def forward(self, x):
+    def call(self, x):
         feats = self.base(x)
         p_feats = self.fpn(feats)
         outs = []
@@ -52,11 +49,14 @@ class FpnNet(nn.Module):
 
 
 if __name__ == "__main__":
-    head_ch = 32
+    from models.tf.BackLite import Backbone
+    head_ch = 24
     reg_dict = {'hm': 1, 'of': 2, 'wh': 2}
-    backbone = Backbone(head_ch)#Backbone(head_ch)
-    net = FpnNet(backbone, head_ch, reg_dict, one_feat_map=False)
-    x = torch.randn(1, 3, 640, 480)
+    backbone = Backbone(head_ch)
+    net = FpnNet(backbone, head_ch, reg_dict, one_feat_map=True)
+
+    input_shape = (1, 320, 320, 3)
+    x = tf.random.normal(input_shape)
     
     y = net(x)
     for e in y:

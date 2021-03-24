@@ -29,9 +29,9 @@ class BigBlock(tf.keras.Model):
                 block = Block(out_c, 1, res=True)
             model.append(block)
 
-        self.big_block = tf.keras.Sequential(*model)
+        self.big_block = tf.keras.Sequential([*model])
     
-    def forward(self, x):
+    def call(self, x):
         return self.big_block(x)
 
 
@@ -64,7 +64,7 @@ class Backbone(tf.keras.Model):
             ConvBn(filters=head_ch, kernel_size=1, strides=1) for _ in self.feat_channels
         ]        
 
-    def forward(self, x):
+    def call(self, x):
         x = self.stem(x)
         feats = []
         for i, block in enumerate(self.blocks):
@@ -74,3 +74,12 @@ class Backbone(tf.keras.Model):
                     self.head_convs[len(feats)](x)
                 )
         return feats
+
+if __name__ == "__main__":
+    input_shape = (1, 320, 320, 3)
+    x = tf.random.normal(input_shape)
+
+    model = Backbone(24)
+    y = model(x)
+    for _y in y:
+        print(_y.shape)

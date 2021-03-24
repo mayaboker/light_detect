@@ -30,7 +30,7 @@ class FpnHead(tf.keras.Model):
             for _ in range(self.num_outputs)
         ]
 
-    def forward(self, feats):
+    def call(self, feats):
         x = feats[0]
         outs = []
         for i in range(1, len(feats)):
@@ -43,9 +43,12 @@ class FpnHead(tf.keras.Model):
         return outs
 
 if __name__ == "__main__":
-    input_shape = (2, 32, 32, 24)
-    x = tf.random.normal(input_shape)
+    input_shapes = [(1, 10, 10, 24), (1, 20, 20, 24), (1, 40, 40, 24), (1, 80, 80, 24)] 
+    x = []
+    for shape in input_shapes:
+        x.append(tf.random.normal(shape))
 
-    conv = UpSample(24)
-    y = conv(x)
-    print(y.shape)
+    model = FpnHead(24, 4)
+    y = model(x)
+    for _y in y:
+        print(_y.shape)
