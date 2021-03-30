@@ -36,7 +36,7 @@ class FpnNet(nn.Module):
         return reg_head_dict
             
 
-    def forward(self, x):
+    def forward(self, x, ret_feats=False):
         feats = self.base(x)
         p_feats = self.fpn(feats)
         outs = []
@@ -48,6 +48,8 @@ class FpnNet(nn.Module):
                 )
             outs.append(reg_outs)
 
+        if ret_feats:
+            return outs, feats
         return outs
 
 

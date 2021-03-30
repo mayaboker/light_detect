@@ -21,19 +21,19 @@ class FpnNet(tf.keras.Model):
     def build_regression_head(self):
         reg_head_dict = {}
         for head, num_channels in self.reg_dict.items():
-            m_head = tf.keras.Sequential()
+            m_head = tf.keras.Sequential(name=head)
             activation = None
             if head == 'hm':
                 activation = 'sigmoid'
             m_head.add(
-                tf.keras.layers.Conv2D(filters=num_channels, kernel_size=1, strides=1, use_bias=True, activation=activation)
+                tf.keras.layers.Conv2D(filters=num_channels, kernel_size=1, strides=1, use_bias=True, activation=activation, name='conv2d')
             )            
             reg_head_dict[head] = m_head
 
         return reg_head_dict
             
 
-    def call(self, x):
+    def call(self, x, ret_feats=False):
         feats = self.base(x)
         p_feats = self.fpn(feats)
         outs = []
@@ -44,7 +44,8 @@ class FpnNet(tf.keras.Model):
                     self.reg_heads[i][reg_head](p_feat)
                 )
             outs.append(reg_outs)
-
+        if ret_feats:
+            return outs, feats
         return outs
 
 

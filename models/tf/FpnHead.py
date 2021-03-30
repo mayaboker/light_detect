@@ -2,15 +2,15 @@ import tensorflow as tf
 from models.tf.common import ConvBn, DwConvBn
 
 
-def UpSample(in_c, mode='interpolate'):
+def UpSample(in_c, mode='interpolate', name=''):
     if mode == 'conv':
         # TODO - support tf conv transpose
         model = None
     elif mode == 'interpolate':
         model = tf.keras.Sequential([
-            tf.keras.layers.UpSampling2D(size=2, interpolation='nearest'),
+            tf.keras.layers.UpSampling2D(size=2, interpolation='nearest', name='upsampling2d'),
             ConvBn(filters=in_c, kernel_size=1, strides=1, use_bias=False)
-        ])
+        ], name=name)
 
     return model
 
@@ -20,14 +20,14 @@ class FpnHead(tf.keras.Model):
         super(FpnHead, self).__init__()
         
         self.ups = [
-            UpSample(head_ch, mode=upsample_mode)
-            for _ in range(num_laterals-1)
+            UpSample(head_ch, mode=upsample_mode, name=f'up_{i}')
+            for i in range(num_laterals-1)
         ]
         self.one_feat_map = one_feat_map
         self.num_outputs = 1 if one_feat_map else num_laterals
         self.conv_feats = [
-            ConvBn(filters=head_ch, kernel_size=3, strides=1, use_bias=False)
-            for _ in range(self.num_outputs)
+            ConvBn(name=f'conv_feats_{i}', filters=head_ch, kernel_size=3, strides=1, use_bias=False)
+            for i in range(self.num_outputs)
         ]
 
     def call(self, feats):
