@@ -55,15 +55,6 @@ def load_weight(torch_ckpt, tf_model, mapping_table):
     load_module_weight(torch_ckpt, tf_model, mapping_table, layer=tf_model)
 
 
-def convert(torch_ckpt, tf_model, mapping_table, models_path, model_name):
-    load_weight(torch_ckpt, tf_model, mapping_table)
-    
-    tf_model_checker(torch_ckpt, tf_model)
-
-    tf_model.compute_output_shape(input_shape=(None, 320,320,3))
-    tf_model.save(f'{models_path}/{model_name}/', include_optimizer=False)
-
-
 def tf_model_checker(torch_ckpt, tf_model):
     cfg = load_yaml('config.yaml')
     torch_model = get_fpn_net(cfg['net'])
@@ -109,17 +100,60 @@ def print_modules_names(layer=None, name=''):
     return mapping
 
 
+def convert(torch_ckpt, tf_model, mapping_table, models_path, model_name):
+    load_weight(torch_ckpt, tf_model, mapping_table)
+    
+    tf_model_checker(torch_ckpt, tf_model)
+
+    tf_model.compute_output_shape(input_shape=(None, 320,320,3))
+    tf_model.save(f'{models_path}/{model_name}/', include_optimizer=False)
+    convert_tflite(tf_model, models_path, model_name)
+    print("Converted to tflite")
+
+
+def convert_tflite(tf_model, models_path, model_name):
+    # Convert the model to the TensorFlow Lite format without quantization
+    converter = tf.lite.TFLiteConverter.from_keras_model(tf_model)
+    # converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    model_tflite = converter.convert()
+    # # Save the model to disk
+    with open(f'{models_path}/{model_name}.tflite', "wb") as f:
+        f.write(model_tflite)
+    
+    # Convert the model to the TensorFlow Lite format with quantization
+    def representative_dataset():
+        for i in range(160):
+            input_shape = (320, 320, 3)
+            x = tf.random.normal(input_shape)
+            yield [np.expand_dims(x, axis=0)]
+
+    # Set the optimization flag.
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    # Enforce integer only quantization
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+    converter.inference_input_type = tf.int8
+    converter.inference_output_type = tf.int8
+    # Provide a representative dataset to ensure we quantize correctly.
+    converter.representative_dataset = representative_dataset
+    model_quant = converter.convert()
+
+    # Save the model to disk
+    with open(f'{models_path}/{model_name}_quant.tflite', "wb") as f:
+        f.write(model_quant)
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
     description='convert model')
 
     parser.add_argument('--ckpt', type=str, default='../tf_convert/sample_torch.pth', help='torch checkpoint path')
     parser.add_argument('--name', type=str, default='test_tf', help='torch checkpoint path')
+    parser.add_argument('--map', type=str, default='./models/tf/mapping_table.json', help='Mapping table json file')
     args = parser.parse_args()
     
     cfg = load_yaml('config.yaml')
     models_path = cfg['paths']['converted_models']
-    # one_feat = cfg['net']['one_feat_map']
     
     model_name = args.name
     if model_name is None:
@@ -128,7 +162,7 @@ if __name__ == '__main__':
     torch_ckpt = args.ckpt
     torch_ckpt = torch.load(torch_ckpt, map_location='cpu')['net_state_dict']
 
-    with open('mappin_table_real.json', 'r') as j:
+    with open(args.map, 'r') as j:
         mapping_table = json.load(j) 
     
 
