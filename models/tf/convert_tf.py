@@ -117,10 +117,11 @@ def convert_tflite(tf_model, models_path, model_name):
     # converter = tf.lite.TFLiteConverter.from_keras_model(model)
     model_tflite = converter.convert()
     # # Save the model to disk
-    with open(f'{models_path}/{model_name}.tflite', "wb") as f:
+    with open(f'{models_path}/{model_name}/{model_name}.tflite', "wb") as f:
         f.write(model_tflite)
     
     # Convert the model to the TensorFlow Lite format with quantization
+    # TODO - add representive dataset
     def representative_dataset():
         for i in range(160):
             input_shape = (320, 320, 3)
@@ -138,7 +139,7 @@ def convert_tflite(tf_model, models_path, model_name):
     model_quant = converter.convert()
 
     # Save the model to disk
-    with open(f'{models_path}/{model_name}_quant.tflite', "wb") as f:
+    with open(f'{models_path}/{model_name}/{model_name}_quant.tflite', "wb") as f:
         f.write(model_quant)
 
 
