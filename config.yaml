@@ -1,7 +1,7 @@
 {% set converted_models = '../converted_models' %}
-{% set data_dir = '/home/core4/data/CAVIAR' %}
+{% set data_dir = '/home/core4/data' %}
 {% set log_dir = '../logs' %}
-{% set exp_name = 'test1' %}
+{% set exp_name = 'test_caviar_refine2' %}
 
 
 paths:
@@ -9,7 +9,9 @@ paths:
   log_dir: {{ log_dir }}/{{ exp_name }}/logs
   converted_models: {{ converted_models }}
   update_interval: 20
-  data_dir: {{ data_dir }}
+
+  caviar_dir: {{ data_dir }}/CAVIAR
+  voc_dir: {{ data_dir }}/pascal_voc_seg/VOCdevkit/VOC2012
 
 net:
   one_feat_map: True
@@ -19,17 +21,20 @@ net:
     hm: 1
     wh: 2
     of: 2
+  pretrained: True
+  pretrained_model: '/home/core4/Documents/logs/test_voc/checkpoints/Epoch_199.pth'
 
-train:    
+train:   
+  dataset: caviar   # caviar | voc
   mixed_precision: True
   batch_size: 64
-  epochs: 100
-  lr: 0.02
-  weight_decay: 0.0
+  epochs: 500
+  lr: 0.001
+  weight_decay: 0.00001
   #losses
   loss_weights:
     hm: 1
-    wh: 0.25
+    wh: 0.1
     of: 1
   losses:
     hm: asl     # asl | focal
@@ -42,7 +47,7 @@ train:
   # scheduler 
   scheduler: ocp  # ocp | multi_step
   ocp_params:
-    max_lr_pct: 0.2
+    max_lr_pct: 0.1
   multi_params:
     milestones: []
     gamma: 0.1

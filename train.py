@@ -3,7 +3,6 @@ from pathlib import Path
 import shutil
 import os
 import os.path as osp
-import random
 import numpy as np
 from tqdm import tqdm
 
@@ -19,11 +18,8 @@ from eval import test
 from utils.utils import load_yaml, ProbsAverageMeter
 from utils.log_utils import Writer
 
-from factory import get_fpn_net
-
+from factory import get_fpn_net, get_pedestrian_dataset
 from losses.AnchorFreeloss import AnchorFreeLoss
-from datasets.CAVIARDataset import CAVIARDataset as Dataset
-
 from utils.LossMetric import LossMetric
 
 class Trainer:
@@ -45,12 +41,30 @@ class Trainer:
         self.scaler = GradScaler() if self.use_amp else None
 
         # data setup
-        # TODO - add val datasets
-        self.train_dataset = Dataset(self.paths['data_dir'], augment=get_train_transforms(self.trans_params))
+        dataset_name = self.train_params['dataset']
+        print(f'Using dataset: {dataset_name}')
+        self.train_dataset = get_pedestrian_dataset(
+            dataset_name,
+            self.paths,
+            augment=get_train_transforms(self.trans_params),
+            mode='train'
+        )
         print(f'Train dataset: {len(self.train_dataset)} samples')
-        self.val_dataset = Dataset(self.paths['data_dir'], augment=get_val_transforms(self.trans_params), mode='val')
+
+        self.val_dataset = get_pedestrian_dataset(
+            dataset_name,
+            self.paths,
+            augment=get_val_transforms(self.trans_params),
+            mode='val'
+        )
         print(f'Val dataset: {len(self.val_dataset)} samples')
-        self.test_dataset = Dataset(self.paths['data_dir'], augment=get_test_transforms(self.trans_params), mode='test')
+
+        self.test_dataset = get_pedestrian_dataset(
+            dataset_name,
+            self.paths,
+            augment=get_test_transforms(self.trans_params),
+            mode='test'
+        )
 
         self.criterion = AnchorFreeLoss(self.train_params)
 
@@ -97,16 +111,26 @@ class Trainer:
 
         # net setup
         print('Preparing net: ')
-        net = get_fpn_net(self.net_params)
-        # TODO - pretrained / restore
-        net.cuda()
-
+        net = get_fpn_net(self.net_params)        
         # train setup
         lr = self.train_params['lr']
         epochs = self.train_params['epochs']
         weight_decay = self.train_params['weight_decay']
 
         self.optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay, eps=1e-4)
+        if self.net_params['pretrained']:
+            checkpoint = torch.load(self.net_params['pretrained_model'], map_location="cuda")
+            net.load_state_dict(checkpoint['net_state_dict'])            
+            self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            for p in self.optimizer.param_groups:                
+                p['lr'] = lr
+            for state in self.optimizer.state.values():
+                for k, v in state.items():
+                    if torch.is_tensor(v):
+                        state[k] = v.cuda()                
+            print('CHECKPOINT LOADED')
+        net.cuda()
+
 
         first_epoch = 0
         # scheduler 
@@ -121,11 +145,12 @@ class Trainer:
                 pct_start=self.train_params['ocp_params']['max_lr_pct']
             )
         elif self.sched_type == 'multi_step':
+            last_epoch = -1 if first_epoch == 0 else first_epoch
             self.scheduler = MultiStepLR(
                 self.optimizer,
                 milestones=self.train_params['multi_params']['milestones'],
                 gamma=self.train_params['multi_params']['gamma'],
-                last_epoch=first_epoch
+                last_epoch=last_epoch
             )
         
         #start training
@@ -142,7 +167,7 @@ class Trainer:
                 self.scheduler.step()
 
             if (epoch + 1) % val_rate == 0 or epoch == epochs -1:
-                self.eval(net, val_loader, (epoch+1) * len(train_loader))
+                self.eval(net, val_loader, epoch * len(train_loader))
             if (epoch + 1) % (val_rate * test_rate) == 0 or epoch == epochs -1:
                 self.test_ap(net, epoch)
                 self.save_checkpoints(epoch, net)
@@ -198,7 +223,7 @@ class Trainer:
 
     def test_ap(self, net, epoch):
         ap = test(net, self.test_dataset)
-        self.writer.log_ap(epoch + 1, ap)
+        self.writer.log_ap(epoch, ap)
 
 
 

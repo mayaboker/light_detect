@@ -10,7 +10,10 @@ class UpSample(nn.Module):
         if mode == 'conv':
             self.up = ConvTransposeBn(in_c, in_c, k=2, s=2)
         elif mode == 'interpolate':
-            pass
+            self.up = nn.Sequential(                
+                nn.Upsample(scale_factor=2, mode='nearest'),
+                ConvBn(in_c, in_c, k=1, s=1)
+            )
         
     def forward(self, x):
         return self.up(x)
