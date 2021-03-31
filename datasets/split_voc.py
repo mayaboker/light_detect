@@ -4,10 +4,10 @@ from pathlib import Path
 from shutil import move
 
 if __name__ == "__main__":
-    root = '/home/core4/data/CAVIAR'
+    root = '/home/core4/data/pascal_voc_seg/VOCdevkit/VOC2012'
     train_folders = ['Browse1', 'Browse2', 'Browse3', 'Browse4', 'Browse_WhileWaiting1', 'Browse_WhileWaiting2', 
-                     'Rest_FallOnFloor', 'Walk1', 'Walk2']
-    val_folders = ['Rest_InChair', 'Rest_SlumpOnFloor', 'Walk3']
+                     'Rest_FallOnFloor', 'Walk1', 'Walk2', 'Rest_InChair']
+    val_folders = ['Rest_SlumpOnFloor', 'Walk3']
     test_folders = ['Rest_WiggleOnFloor', 'Rest_FallOnFloor']
     
     for i, d in enumerate(train_folders):        
@@ -29,7 +29,7 @@ if __name__ == "__main__":
             data = json.load(f)
         data_parsed.update(data)    
     
-    with open('train_gt.json', "w") as f: 
+    with open('/home/core4/data/CAVIAR/train/train_gt.json', "w") as f: 
         data = json.dump(data_parsed, f)
 
     data_parsed = {}
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             data = json.load(f)
         data_parsed.update(data)    
     
-    with open('val_gt.json', "w") as f: 
+    with open('/home/core4/data/CAVIAR/val/val_gt.json', "w") as f: 
         data = json.dump(data_parsed, f)
 
     data_parsed = {}
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             data = json.load(f)
         data_parsed.update(data)    
     
-    with open('test_gt.json', "w") as f: 
+    with open('/home/core4/data/CAVIAR/test/test_gt.json', "w") as f: 
         data = json.dump(data_parsed, f)
     
     '''

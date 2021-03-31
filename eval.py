@@ -5,6 +5,9 @@ import torch
 from api import decode
 from evaluate.evaluation import image_eval, img_pr_info, dataset_pr_info, voc_ap
 from datasets.dataset_utils import test_collate_fn
+import cv2 
+import matplotlib.pyplot as plt
+from torchvision.transforms.functional import to_pil_image
 
 def test(net, dataset, batch_size=32):
     net.eval()
@@ -13,9 +16,9 @@ def test(net, dataset, batch_size=32):
 
     loader = DataLoader(
         dataset,
-        batch_size=batch_size,
+        batch_size=1,
         pin_memory=True,
-        num_workers=4,
+        num_workers=0,
         shuffle=False,
         collate_fn=test_collate_fn
     )
@@ -24,14 +27,31 @@ def test(net, dataset, batch_size=32):
     iou_thresh = 0.4
     thresh_num = 1000
     count_obj = 0
-
+    
+    if False:
+        for i, data in tqdm(enumerate(loader), desc="Test: ", ascii=True, total=len(loader)):
+            img, labels = data
+            img = img.cuda()
+            with torch.no_grad():
+                out = net(img)
+            boxes, scores = decode(out, strides, 0.35, K=100)            
+            img_show = np.array(to_pil_image(img.squeeze(0).cpu()))
+            for ll in labels:
+                for l in ll:
+                    img_show = cv2.rectangle(img_show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (255, 0, 0), 1)
+            for i, l in enumerate(boxes[0]):
+                img_show = cv2.rectangle(img_show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (0, 255, 0), 1)
+        
+            plt.imshow(img_show)
+            plt.show()
+        
     pr_curve = np.zeros((thresh_num, 2)).astype('float')
     for i, data in tqdm(enumerate(loader), desc="Test: ", ascii=True, total=len(loader)):
         img, labels = data
         img = img.cuda()
         with torch.no_grad():
             out = net(img)
-        boxes, scores = decode(out, strides, threshold, K=100)
+        boxes, scores = decode(out, strides, threshold, K=100)                
 
         for i in range(len(labels)):
             gt_boxes = labels[i]
@@ -61,17 +81,18 @@ def test(net, dataset, batch_size=32):
 
 if __name__ == "__main__":
     from utils.utils import load_yaml
-    from datasets.CAVIARDataset import CAVIARDataset
+    #from datasets.CAVIARDataset import CAVIARDataset as Dataset
+    from datasets.VOC2012Dataset import VOCDataset as Dataset
     from transformations import get_test_transforms
     from factory import get_fpn_net
 
-    cfg = load_yaml('config_eval.yaml')
-    dataset = CAVIARDataset(cfg['paths']['data_dir'], augment=get_test_transforms(cfg['train']['transforms']), mode='test', strides=cfg['net']['strides'])
+    cfg = load_yaml('config_VOC.yaml')
+    dataset = Dataset(cfg['paths']['data_dir'], augment=get_test_transforms(cfg['train']['transforms']), mode='test', strides=cfg['net']['strides'])
 
     net = get_fpn_net(cfg['net'])
     net.cuda()
 
-    sd = torch.load('../logs/test3/checkpoints/Epoch_257.pth')['net_state_dict']
+    sd = torch.load('../logs/test_voc/checkpoints/Epoch_15.pth')['net_state_dict']
     net.load_state_dict(sd)
     ap = test(net, dataset)
     print(ap) 
