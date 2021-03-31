@@ -12,6 +12,7 @@ paths:
 
   caviar_dir: {{ data_dir }}/CAVIAR
   voc_dir: {{ data_dir }}/pascal_voc_seg/VOCdevkit/VOC2012
+  virat_dir: {{ data_dir }}/virat/frames
 
 net:
   one_feat_map: True

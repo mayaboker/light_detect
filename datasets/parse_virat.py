@@ -40,7 +40,6 @@ def parse_data(root, fps_save=2):
     fnames_mpg = sorted(glob.glob(root + '/videos/*.mp4'))
     fnames_ann = sorted(glob.glob(root + '/annotations/*.txt'))
 
-    # all_labels = {}
     for fname in fnames_mpg:            
         v_name = fname.split('/')[-1].split('.')[0]                                   
         print(v_name)
@@ -72,17 +71,13 @@ def parse_data(root, fps_save=2):
             frame_name = os.path.join(v_name, str(i).zfill(6) + '.png')
             cv2.imwrite(frame_path, frame)
             
-            v_labels[frame_name] = labels[i]
-            # all_labels[frame_name] = labels[i]    
+            v_labels[frame_name] = labels[i]   
 
         labels_path = os.path.join(frames_path, 'labels_gt.json')
         with open(labels_path, "w") as write_file:
                 json.dump(v_labels, write_file)
         cap.release()
     
-    # labels_path = os.path.join(root, 'frames', 'labels_gt.json')
-    # with open(labels_path, "w") as write_file:
-    #     json.dump(all_labels, write_file)
 
 def load_json(j_path):
     with open(j_path, 'r') as j:
