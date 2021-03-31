@@ -13,6 +13,7 @@ paths:
 
 net:
   one_feat_map: True
+  upsample: 'interpolate'   # interpolate | conv
   strides: [4]
   head_channels: 24
   channels_dict:

@@ -183,14 +183,13 @@ class Trainer:
         net.eval()
         loss_metric = LossMetric(self.cfg)
         with torch.no_grad():
-            for mini_batch_i, read_mini_batch in tqdm(enumerate(loader), desc=f'Val:', ascii=True, total=len(loader)):
+            for _, read_mini_batch in tqdm(enumerate(loader), desc=f'Val:', ascii=True, total=len(loader)):
                 data, labels = read_mini_batch
                 data = data.cuda()
                 labels = [label.cuda() for label in labels]            
                 with amp.autocast():
                     out = net(data)
-                    loss_dict, _ = self.criterion(out, labels)
-                    # loss = loss_metric.calculate_loss(loss_dict)                                                                
+                    loss_dict, _ = self.criterion(out, labels)                                                               
 
                 loss_metric.add_sample(loss_dict)
                 
@@ -199,7 +198,6 @@ class Trainer:
     def test_ap(self, net, epoch):
         ap = test(net, self.test_dataset)
         self.writer.log_ap(epoch + 1, ap)
-
 
 
 if __name__ == "__main__":

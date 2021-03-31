@@ -4,13 +4,16 @@ from models.common import ConvBn, ConvTransposeBn
 
 
 class UpSample(nn.Module):
-    def __init__(self, in_c, mode='conv'):
+    def __init__(self, in_c, mode='interpolate'):
         super(UpSample, self).__init__()
         
         if mode == 'conv':
             self.up = ConvTransposeBn(in_c, in_c, k=2, s=2)
         elif mode == 'interpolate':
-            pass
+            self.up = nn.Sequential(
+                nn.Upsample(scale_factor=2, mode='nearest'),
+                ConvBn(in_c, in_c, k=1, s=1)
+            )
         
     def forward(self, x):
         return self.up(x)
@@ -31,8 +34,6 @@ class FpnHead(nn.Module):
             ConvBn(head_ch, head_ch, k=3, s=1)
             for _ in range(self.num_outputs)
         ])
-        
-
 
     def forward(self, feats):
         x = feats[0]

@@ -1,0 +1,1487 @@
+{
+    "backbone.stem.conv2d": {
+        "name": "backbone.stem.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                3,
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.stem.conv.0.weight"
+        ]
+    },
+    "backbone.stem.batch_norm": {
+        "name": "backbone.stem.batch_norm",
+        "shapes": [
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.stem.conv.1"
+        ]
+    },
+    "backbone.bigblock_0.block_0.conv_bn.conv2d": {
+        "name": "backbone.bigblock_0.block_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                64,
+                16
+            ],
+            [
+                16
+            ]
+        ],
+        "weights": [
+            "base.blocks.0.big_block.0.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_0.block_0.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_0.block_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                16
+            ],
+            [
+                16
+            ],
+            [
+                16
+            ],
+            [
+                16
+            ]
+        ],
+        "weights": [
+            "base.blocks.0.big_block.0.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_0.block_0.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_0.block_0.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                16,
+                1
+            ],
+            [
+                16
+            ]
+        ],
+        "weights": [
+            "base.blocks.0.big_block.0.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_0.block_0.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_0.block_0.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                16
+            ],
+            [
+                16
+            ],
+            [
+                16
+            ],
+            [
+                16
+            ]
+        ],
+        "weights": [
+            "base.blocks.0.big_block.0.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_1.block_0.conv_bn.conv2d": {
+        "name": "backbone.bigblock_1.block_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                16,
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.0.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_1.block_0.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_1.block_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.0.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_1.block_0.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_1.block_0.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                24,
+                1
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.0.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_1.block_0.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_1.block_0.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.0.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_1.block_1.conv_bn.conv2d": {
+        "name": "backbone.bigblock_1.block_1.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.1.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_1.block_1.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_1.block_1.conv_bn.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.1.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_1.block_1.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_1.block_1.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                24,
+                1
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.1.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_1.block_1.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_1.block_1.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.blocks.1.big_block.1.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_2.block_0.conv_bn.conv2d": {
+        "name": "backbone.bigblock_2.block_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.0.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_2.block_0.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_2.block_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.0.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_2.block_0.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_2.block_0.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                32,
+                1
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.0.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_2.block_0.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_2.block_0.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.0.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_2.block_1.conv_bn.conv2d": {
+        "name": "backbone.bigblock_2.block_1.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                32,
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.1.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_2.block_1.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_2.block_1.conv_bn.batch_norm",
+        "shapes": [
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.1.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_2.block_1.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_2.block_1.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                32,
+                1
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.1.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_2.block_1.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_2.block_1.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.1.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_2.block_2.conv_bn.conv2d": {
+        "name": "backbone.bigblock_2.block_2.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                32,
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.2.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_2.block_2.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_2.block_2.conv_bn.batch_norm",
+        "shapes": [
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.2.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_2.block_2.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_2.block_2.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                32,
+                1
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.2.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_2.block_2.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_2.block_2.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ],
+            [
+                32
+            ]
+        ],
+        "weights": [
+            "base.blocks.2.big_block.2.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_3.block_0.conv_bn.conv2d": {
+        "name": "backbone.bigblock_3.block_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                32,
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.0.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_3.block_0.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_3.block_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.0.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_3.block_0.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_3.block_0.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                64,
+                1
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.0.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_3.block_0.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_3.block_0.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.0.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_3.block_1.conv_bn.conv2d": {
+        "name": "backbone.bigblock_3.block_1.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                64,
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.1.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_3.block_1.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_3.block_1.conv_bn.batch_norm",
+        "shapes": [
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.1.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_3.block_1.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_3.block_1.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                64,
+                1
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.1.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_3.block_1.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_3.block_1.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ],
+            [
+                64
+            ]
+        ],
+        "weights": [
+            "base.blocks.3.big_block.1.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_0.conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                64,
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.0.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_0.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.0.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_0.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_0.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                96,
+                1
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.0.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_0.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_0.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.0.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_1.conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_1.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                96,
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.1.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_1.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_1.conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.1.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_1.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_1.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                96,
+                1
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.1.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_1.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_1.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.1.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_2.conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_2.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                96,
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.2.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_2.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_2.conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.2.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_2.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_2.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                96,
+                1
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.2.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_2.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_2.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.2.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_3.conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_3.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                96,
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.3.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_3.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_3.conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.3.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_4.block_3.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_4.block_3.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                96,
+                1
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.3.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_4.block_3.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_4.block_3.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ],
+            [
+                96
+            ]
+        ],
+        "weights": [
+            "base.blocks.4.big_block.3.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_5.block_0.conv_bn.conv2d": {
+        "name": "backbone.bigblock_5.block_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                96,
+                160
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.0.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_5.block_0.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_5.block_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.0.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_5.block_0.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_5.block_0.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                160,
+                1
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.0.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_5.block_0.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_5.block_0.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.0.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_5.block_1.conv_bn.conv2d": {
+        "name": "backbone.bigblock_5.block_1.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                160,
+                160
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.1.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_5.block_1.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_5.block_1.conv_bn.batch_norm",
+        "shapes": [
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.1.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_5.block_1.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_5.block_1.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                160,
+                1
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.1.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_5.block_1.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_5.block_1.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ],
+            [
+                160
+            ]
+        ],
+        "weights": [
+            "base.blocks.5.big_block.1.block.1.conv.1"
+        ]
+    },
+    "backbone.bigblock_6.block_0.conv_bn.conv2d": {
+        "name": "backbone.bigblock_6.block_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                160,
+                320
+            ],
+            [
+                320
+            ]
+        ],
+        "weights": [
+            "base.blocks.6.big_block.0.block.0.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_6.block_0.conv_bn.batch_norm": {
+        "name": "backbone.bigblock_6.block_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                320
+            ],
+            [
+                320
+            ],
+            [
+                320
+            ],
+            [
+                320
+            ]
+        ],
+        "weights": [
+            "base.blocks.6.big_block.0.block.0.conv.1"
+        ]
+    },
+    "backbone.bigblock_6.block_0.dw_conv_bn.conv2d": {
+        "name": "backbone.bigblock_6.block_0.dw_conv_bn.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                320,
+                1
+            ],
+            [
+                320
+            ]
+        ],
+        "weights": [
+            "base.blocks.6.big_block.0.block.1.conv.0.weight"
+        ]
+    },
+    "backbone.bigblock_6.block_0.dw_conv_bn.batch_norm": {
+        "name": "backbone.bigblock_6.block_0.dw_conv_bn.batch_norm",
+        "shapes": [
+            [
+                320
+            ],
+            [
+                320
+            ],
+            [
+                320
+            ],
+            [
+                320
+            ]
+        ],
+        "weights": [
+            "base.blocks.6.big_block.0.block.1.conv.1"
+        ]
+    },
+    "backbone.head_convs_0.conv2d": {
+        "name": "backbone.head_convs_0.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.0.conv.0.weight"
+        ]
+    },
+    "backbone.head_convs_0.batch_norm": {
+        "name": "backbone.head_convs_0.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.0.conv.1"
+        ]
+    },
+    "backbone.head_convs_1.conv2d": {
+        "name": "backbone.head_convs_1.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                32,
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.1.conv.0.weight"
+        ]
+    },
+    "backbone.head_convs_1.batch_norm": {
+        "name": "backbone.head_convs_1.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.1.conv.1"
+        ]
+    },
+    "backbone.head_convs_2.conv2d": {
+        "name": "backbone.head_convs_2.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                96,
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.2.conv.0.weight"
+        ]
+    },
+    "backbone.head_convs_2.batch_norm": {
+        "name": "backbone.head_convs_2.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.2.conv.1"
+        ]
+    },
+    "backbone.head_convs_3.conv2d": {
+        "name": "backbone.head_convs_3.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                320,
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.3.conv.0.weight"
+        ]
+    },
+    "backbone.head_convs_3.batch_norm": {
+        "name": "backbone.head_convs_3.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "base.head_convs.3.conv.1"
+        ]
+    },
+    "fpn_head.up_0.conv_bn.conv2d": {
+        "name": "fpn_head.up_0.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.ups.0.up.1.conv.0.weight"
+        ]
+    },
+    "fpn_head.up_0.conv_bn.batch_norm": {
+        "name": "fpn_head.up_0.conv_bn.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.ups.0.up.1.conv.1"
+        ]
+    },
+    "fpn_head.up_1.conv_bn.conv2d": {
+        "name": "fpn_head.up_1.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.ups.1.up.1.conv.0.weight"
+        ]
+    },
+    "fpn_head.up_1.conv_bn.batch_norm": {
+        "name": "fpn_head.up_1.conv_bn.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.ups.1.up.1.conv.1"
+        ]
+    },
+    "fpn_head.up_2.conv_bn.conv2d": {
+        "name": "fpn_head.up_2.conv_bn.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.ups.2.up.1.conv.0.weight"
+        ]
+    },
+    "fpn_head.up_2.conv_bn.batch_norm": {
+        "name": "fpn_head.up_2.conv_bn.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.ups.2.up.1.conv.1"
+        ]
+    },
+    "fpn_head.conv_feats_0.conv2d": {
+        "name": "fpn_head.conv_feats_0.conv2d",
+        "shapes": [
+            [
+                3,
+                3,
+                24,
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.conv_feats.0.conv.0.weight"
+        ]
+    },
+    "fpn_head.conv_feats_0.batch_norm": {
+        "name": "fpn_head.conv_feats_0.batch_norm",
+        "shapes": [
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ],
+            [
+                24
+            ]
+        ],
+        "weights": [
+            "fpn.conv_feats.0.conv.1"
+        ]
+    },
+    "hm.conv2d": {
+        "name": "hm.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                1
+            ],
+            [
+                1
+            ]
+        ],
+        "weights": [
+            "reg_heads.0.hm.0.weight",
+            "reg_heads.0.hm.0.bias"
+        ]
+    },
+    "of.conv2d": {
+        "name": "of.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                2
+            ],
+            [
+                2
+            ]
+        ],
+        "weights": [
+            "reg_heads.0.of.0.weight",
+            "reg_heads.0.of.0.bias"
+        ]
+    },
+    "wh.conv2d": {
+        "name": "wh.conv2d",
+        "shapes": [
+            [
+                1,
+                1,
+                24,
+                2
+            ],
+            [
+                2
+            ]
+        ],
+        "weights": [
+            "reg_heads.0.wh.0.weight",
+            "reg_heads.0.wh.0.bias"
+        ]
+    }
+}
