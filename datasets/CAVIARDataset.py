@@ -15,7 +15,7 @@ class CAVIARDataset(PedestrianDataset):
         elif mode == 'val':
             f_data = root + '/' + 'val_gt.json'
         elif mode == 'test':
-            f_data = root + '/' + 'val_gt.json'
+            f_data = root + '/' + 'test_gt.json'
 
         with open(f_data, 'r') as f:
             data = json.load(f)

@@ -1,7 +1,7 @@
 {% set converted_models = '../converted_models' %}
 {% set data_dir = '/home/core4/data' %}
 {% set log_dir = '../logs' %}
-{% set exp_name = 'test_caviar_refine2' %}
+{% set exp_name = 'test_caviar_refine3' %}
 
 
 paths:
@@ -28,9 +28,9 @@ net:
 train:   
   dataset: caviar   # caviar | voc
   mixed_precision: True
-  batch_size: 64
+  batch_size: 128
   epochs: 500
-  lr: 0.001
+  lr: 0.01
   weight_decay: 0.00001
   #losses
   loss_weights:
