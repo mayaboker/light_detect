@@ -27,6 +27,9 @@ class ViratDataset(PedestrianDataset):
             labels.append(data[k])
 
         return f_imgs, labels
+    
+    def name(self):
+        return 'virat'
 
 if __name__ == "__main__":    
     from transformations import get_train_transforms

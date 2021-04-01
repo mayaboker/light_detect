@@ -28,6 +28,9 @@ class CAVIARDataset(PedestrianDataset):
             labels.append([ll[:5] for ll in l])
 
         return f_imgs, labels
+
+    def name(self):
+        return 'caviar'
     
 
 

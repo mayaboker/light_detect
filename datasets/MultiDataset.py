@@ -19,7 +19,7 @@ class MultiDataset(torch.utils.data.Dataset):
         for i, seperator in enumerate(self.seperators):
             if index < seperator:
                 dataset_ind = i
-                pos = seperator - len(self.datasets[i]) -1
+                pos = seperator - len(self.datasets[i])
                 ind = index - pos
                 break
         return dataset_ind, ind

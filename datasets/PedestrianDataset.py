@@ -15,6 +15,9 @@ class PedestrianDataset(torch.utils.data.Dataset, ABC):
 
     def parse_data(self, root, mode):
         raise NotImplementedError('Abstract method')
+
+    def name(self):
+        raise NotImplementedError('Abstract method')
     
     def __getitem__(self, index): 
         img = self.load_image(self.f_imgs[index])       

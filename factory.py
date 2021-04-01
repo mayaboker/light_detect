@@ -1,13 +1,21 @@
 from models.BackLite import Backbone
 from models.FpnNet import FpnNet
 # from resnet import resnet50
-from datasets.CAVIARDataset import CAVIARDataset
-from datasets.VOC2012Dataset import VOCDataset
+from datasets.caviar.CAVIARDataset import CAVIARDataset
+from datasets.voc2012.VOC2012Dataset import VOCDataset
+from datasets.virat.ViratDataset import ViratDataset
+from datasets.MultiDataset import MultiDataset
 
 from models.tf.BackLite import Backbone as BackboneTf
 from models.tf.FpnNet import FpnNet as FpnNetTf
 
-def get_pedestrian_dataset(dataset_name, paths, augment, strides=(4,), mode='train'):
+dataset_paths_dict = {
+    'caviar':   'caviar_dir',
+    'voc':      'voc_dir',
+    'virat':    'virat_dir'      
+}
+
+def get_pedestrian_dataset(dataset_name, paths, augment, strides=(4,), mode='train', multi_datasets=None):
     if dataset_name == 'caviar':
         dataset = CAVIARDataset(
             paths['caviar_dir'],
@@ -22,6 +30,26 @@ def get_pedestrian_dataset(dataset_name, paths, augment, strides=(4,), mode='tra
             strides=strides,
             mode=mode
         )
+    elif dataset_name == 'virat':
+        dataset = ViratDataset(
+            paths['virat_dir'],
+            augment,
+            strides=strides,
+            mode=mode
+        )
+    elif dataset_name == 'multi':
+        datasets_list = []
+        for data in multi_datasets:
+            datasets_list.append(
+                get_pedestrian_dataset(
+                    data,
+                    paths,
+                    augment,
+                    strides=strides,
+                    mode=mode
+                )
+            )
+        dataset = MultiDataset(datasets_list)
     else:
         raise Exception(f'Not implemented dataset: {dataset_name}')
 
@@ -48,9 +76,26 @@ if __name__ == "__main__":
     from transformations import get_train_transforms
     from utils.utils import load_yaml
     cfg = load_yaml('config.yaml')
-    root = cfg['paths']['caviar_dir']
-    D = CAVIARDataset(root, augment=get_train_transforms(cfg['train']['transforms']))
-    
-    img, hms = next(iter(D))
+    paths = cfg['paths']
+    train_cfg = cfg['train']
+    dataset_name = train_cfg['dataset']
+    datasets_multi = train_cfg['multi_datasets']
+
+    D = get_pedestrian_dataset(
+        dataset_name,
+        paths,
+        augment=get_train_transforms(train_cfg['transforms']),
+        mode='train',
+        multi_datasets=datasets_multi
+    )
+
+    for d, s in zip(D.datasets, D.seperators):
+        print(f'Name: {d.name()}', len(d), s)
+
+    for i in range(len(D)):
+        data_ind, ind = D.get_actual_index(i)
+        if ind >= len(D.datasets[data_ind])-1:
+            print(f'#{i}:\t Dataset: {data_ind},\t index: {ind}')
+        # img, hms = D[i]
     print()
     

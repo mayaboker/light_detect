@@ -27,7 +27,9 @@ net:
   pretrained_model: '/home/core4/Documents/logs/test_voc/checkpoints/Epoch_199.pth'
 
 train:   
-  dataset: caviar   # caviar | voc
+  dataset: multi   # caviar | voc | virat | multi
+  multi_datasets: ['virat', 'caviar']
+
   mixed_precision: True
   batch_size: 128
   epochs: 500
