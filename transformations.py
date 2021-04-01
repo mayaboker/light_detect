@@ -3,7 +3,7 @@ from albumentations.pytorch import ToTensorV2
 
 # TODO - replace resize to keep aspect ratio
 def get_train_transforms(cfg_trans):
-    min_area = cfg_trans['min_box'] * cfg_trans['min_box']
+    min_area = cfg_trans['min_area']
     trans_list = A.Compose([        
         A.Resize(height=cfg_trans['in_size'][1], width=cfg_trans['in_size'][0], p=1),
         A.HorizontalFlip(p=0.5),                
@@ -17,7 +17,7 @@ def get_train_transforms(cfg_trans):
 
 
 def get_val_transforms(cfg_trans):
-    min_area = cfg_trans['min_box'] * cfg_trans['min_box']
+    min_area = cfg_trans['min_area']
     trans_list = A.Compose([
         A.Resize(height=cfg_trans['in_size'][1], width=cfg_trans['in_size'][0], p=1),        
         A.Normalize(mean=3*[0], std=3*[1]),
@@ -28,11 +28,12 @@ def get_val_transforms(cfg_trans):
 
 
 def get_test_transforms(cfg_trans):
+    min_area = cfg_trans['min_area']
     trans_list = A.Compose([
         A.Resize(height=cfg_trans['in_size'][1], width=cfg_trans['in_size'][0], p=1),
         A.Normalize(mean=3*[0], std=3*[1]),        
         ToTensorV2(),
-    ], bbox_params=A.BboxParams(format='pascal_voc')
+    ], bbox_params=A.BboxParams(format='pascal_voc', min_area=0, min_visibility=0)
     )
     return trans_list
 

@@ -23,4 +23,7 @@ class VOCDataset(PedestrianDataset):
             labels.append([ll[:5] for ll in l])
 
         return f_imgs, labels
+
+    def name(self):
+        return 'voc'
     

@@ -27,7 +27,7 @@ class PedestrianDataset(torch.utils.data.Dataset, ABC):
             transformed = self.augment(image=img, bboxes=labels)
             img = transformed['image']
             labels = transformed['bboxes']            
-            return img, np.array(labels)
+            return img, np.array(labels, dtype=np.float32)
             
         else:            
             transformed = self.augment(image=img, bboxes=labels)            

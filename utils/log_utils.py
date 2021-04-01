@@ -21,9 +21,9 @@ class Writer:
         total = loss_metric.calculate_loss(losses)
         self.writer.add_scalars('Loss/total', {'val': total}, step)
 
-    def log_ap(self, step, ap):
-        print(f'AP:\t {ap}')
-        self.writer.add_scalar('test_ap', ap, step)
+    def log_ap(self, step, ap, dataset_name):
+        print(f'{dataset_name}:\t AP:\t {ap}')
+        self.writer.add_scalar(f'test_ap/{dataset_name}', ap, step)
 
     def log_probs(self, step, probs):
         self.writer.add_scalars('probs', {'p': probs[0]}, step)
