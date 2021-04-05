@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import os 
 import numpy as np
 
+MAX_SIZE = 640
+
 def display_data(frame, boxes):
     for bbox in boxes:
         cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (255, 0, 0), 1)
@@ -32,11 +34,26 @@ def parse_ann(anns):
 
         if num_frame not in labels:
             labels[num_frame] = []
-        labels[num_frame].append([xmin, ymin, xmax, ymax, type_id])
+        labels[num_frame].append([xmin, ymin, xmax, ymax, float(type_id)])
 
     return labels
 
-def parse_data(root, fps_save=2):
+
+def resize_frame(frame, max_size, boxes):
+    h, w = frame.shape[:2]
+    big_size = max(h, w)
+    scale = big_size / max_size
+    
+    dst_h, dst_w = int(h / scale), int(w / scale)
+    frame = cv2.resize(frame, (dst_w, dst_h))
+
+    new_boxes = []
+    for box in boxes:
+        box = [b / scale for b in box] 
+        new_boxes.append(box)
+    return frame, new_boxes
+
+def parse_data(root, out_dir, fps_save=2):
     fnames_mpg = sorted(glob.glob(root + '/videos/*.mp4'))
     fnames_ann = sorted(glob.glob(root + '/annotations/*.txt'))
 
@@ -54,7 +71,7 @@ def parse_data(root, fps_save=2):
         # h_frame = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         # w_frame = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         
-        frames_path = os.path.join(root, 'frames', v_name)
+        frames_path = os.path.join(root, out_dir, v_name)
         Path(frames_path).mkdir(exist_ok=True, parents=True)
         i = 0
         while(True):
@@ -67,6 +84,10 @@ def parse_data(root, fps_save=2):
                 break
             if i % (fps // fps_save) != 0 or i not in labels.keys():
                 continue
+            
+            boxes = labels[i]
+            frame, boxes = resize_frame(frame, MAX_SIZE, boxes)
+
             frame_path = os.path.join(frames_path, str(i).zfill(6) + '.png')
             frame_name = os.path.join(v_name, str(i).zfill(6) + '.png')
             cv2.imwrite(frame_path, frame)
@@ -119,6 +140,7 @@ def split_data(root):
 
 if __name__ == "__main__":
     root = r'/home/robert/Downloads/virat'
-    # parse_data(root)
-    split_data(os.path.join(root, 'frames'))
+    out_dir = 'frames_640'
+    parse_data(root, out_dir, fps_save=2)
+    split_data(os.path.join(root, out_dir))
 
