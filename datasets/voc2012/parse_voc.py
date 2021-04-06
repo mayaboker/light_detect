@@ -7,80 +7,97 @@ import matplotlib.pyplot as plt
 import cv2
 from api import decode
 from torchvision.transforms.functional import to_pil_image
+import xmltodict, json
+from PIL import Image
 
 classes = dict(zip(['person', 'car', 'bus'], range(3)))
 
+DEBUG = False
+
 def preprocess_voc2012(path, categories):
     annotations_path = path / 'Annotations'
-    all_annotations = annotations_path.glob('**/*.xml')
-    filenames = []
-    xmins = []
-    ymins = []
-    xmaxs = []
-    ymaxs = []
-    objects_category = []
+    all_annotations = annotations_path.glob('**/*.xml')        
+    gt = dict()
+    img_names = []
     for annotation_path in all_annotations:
         annotation_path_str = str(annotation_path)
-        curr_annotation = minidom.parse(annotation_path_str)
-        filename = curr_annotation.getElementsByTagName('filename').item(0).firstChild.data
-        objects = curr_annotation.getElementsByTagName('object')
-        for curr_object in objects:
-            category = curr_object.getElementsByTagName('name').item(0).firstChild.data
-            if category in categories:
-                bounding_box = curr_object.getElementsByTagName('bndbox')
-                xmin = float(bounding_box[0].getElementsByTagName('xmin').item(0).firstChild.data)
-                ymin = float(bounding_box[0].getElementsByTagName('ymin').item(0).firstChild.data)
-                xmax = float(bounding_box[0].getElementsByTagName('xmax').item(0).firstChild.data)
-                ymax = float(bounding_box[0].getElementsByTagName('ymax').item(0).firstChild.data)
-                filenames.append(filename)
-                xmins.append(xmin)
-                xmaxs.append(xmax)
-                ymins.append(ymin)
-                ymaxs.append(ymax)
-                objects_category.append(category)
+        with open(annotation_path_str.__str__()) as xml_file:
+            data_dict = xmltodict.parse(xml_file.read())
+        xml_file.close()            
+        data = data_dict['annotation']
+        img_name = data['filename']
+        obj = data['object']
+        bbox = []
+        if isinstance(obj, list):
+            for obj_k in obj:
+                if 'actions' in obj_k.keys():
+                    continue
+                cat = obj_k['name']
+                if cat in categories:
+                    bbox_str = obj_k['bndbox']
+                    x_min = float(bbox_str['xmin'])
+                    x_max = float(bbox_str['xmax'])
+                    y_min = float(bbox_str['ymin'])
+                    y_max = float(bbox_str['ymax'])  
+                    cat = 1#classes[cat]              
+                    bbox.append([x_min, y_min, x_max, y_max, cat])                
+        else:
+            if 'actions' in obj.keys():
+                continue
+            cat = obj['name']
+            if cat in categories:
+                bbox_str = obj['bndbox']
+                x_min = float(bbox_str['xmin'])
+                x_max = float(bbox_str['xmax'])
+                y_min = float(bbox_str['ymin'])
+                y_max = float(bbox_str['ymax'])
+                cat = 1#classes[cat]                       
+                bbox.append([x_min, y_min, x_max, y_max, cat])                            
+        if len(bbox) > 0:
+            gt[img_name] = {'bbox': bbox, 'img_name': img_name}
+            img_names.append(img_name)
+            if DEBUG:
+                img = np.array(Image.open('/home/core4/data/pascal_voc_seg/VOCdevkit/VOC2012/JPEGImages/'+img_name))            
+                bbox = gt[img_name]['bbox']
+                for i, l in enumerate(bbox):
+                    img = cv2.rectangle(img, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (255, 0, 0), 1)
+                plt.imshow(img)
+                plt.show()
+    
+    n_total = len(gt)
+    n_train = int(0.7 * n_total)
+    n_val = int(0.2 * n_total)
+    ii = np.random.permutation(n_total)
+    ii_train = ii[:n_train]
+    ii_val = ii[n_train:n_val+n_train]
+    ii_test = ii[n_train+n_val:]
+    print('train:{} val:{} test:{}'.format(ii_train.shape[0], ii_val.shape[0], ii_test.shape[0]))
+    gt_train = dict()
+    for i in ii_train:
+        im = img_names[i]
+        gt_train[im] = gt[im]
 
+    with open('/home/core4/data/pascal_voc_seg/VOCdevkit/VOC2012/voc_gt_train.json', "w") as write_file:
+        json.dump(gt_train, write_file)
 
-    ii = np.random.permutation(len(filenames)).astype(np.int)
-    N_TRAIN = int(len(filenames) * 0.7)
-    N_VAL = int(len(filenames) * 0.2)        
-    ii_train = ii[:N_TRAIN]
-    ii_val = ii[N_TRAIN:N_TRAIN+N_VAL]
-    ii_test = ii[N_TRAIN+N_VAL:]
+    gt_val = dict()
+    for i in ii_val:
+        im = img_names[i]
+        gt_val[im] = gt[im]
 
-    for i in ['train', 'val', 'test']:
-        if i == 'train':
-            data_index = ii_train
-        if i == 'val':    
-            data_index = ii_val 
-        if i == 'test':
-            data_index = ii_test
-        
-        filenames_ = [filenames[j] for j in data_index]
-        category_ = [classes[objects_category[j]] for j in data_index]
-        xmins_ = [xmins[j] for j in data_index]
-        ymins_ = [ymins[j] for j in data_index]
-        xmaxs_ = [xmaxs[j] for j in data_index]
-        ymaxs_ = [ymaxs[j] for j in data_index]
-            
-        data = {
-            'filename': filenames_,
-            'category': category_,
-            'xmin': xmins_,
-            'ymin': ymins_,
-            'xmax': xmaxs_,
-            'ymax': ymaxs_
-        }
-        df = pd.DataFrame(data=data, columns=['filename', 'category', 'xmin', 'ymin', 'xmax', 'ymax'])
+    with open('/home/core4/data/pascal_voc_seg/VOCdevkit/VOC2012/voc_gt_val.json', "w") as write_file:
+        json.dump(gt_val, write_file)
 
-        print(df.head())
+    gt_test = dict()
+    for i in ii_test:
+        im = img_names[i]
+        gt_test[im] = gt[im]        
 
-        df.to_csv(path / f'voc_data_{i}.csv')
-        
+    with open('/home/core4/data/pascal_voc_seg/VOCdevkit/VOC2012/voc_gt_test.json', "w") as write_file:
+        json.dump(gt_test, write_file)
 
 if __name__ == '__main__':
     voc_root = '/home/core4/data/pascal_voc_seg/VOCdevkit/VOC2012'
     path_to_annotations = Path(voc_root)
-    categories = ['person', 'bus', 'car']
+    categories = ['person']
     preprocess_voc2012(path_to_annotations, categories)
-# class VOC2012Dataset(torch.utils.data.Dataset):
-#     pass
