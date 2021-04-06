@@ -63,7 +63,7 @@ if __name__ == "__main__":
         out = [[hm, of, wh]]
         boxes, scores = decode(out, [4], 0.15, K=100)
         plt.imshow(show, cmap='hot', interpolation='nearest')
-        for i, l in enumerate(boxes[0]):    
+        for i, l in enumerate(boxes[0]):
             show = cv2.rectangle(show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (255, 0, 0), 2)    
         for i, l in enumerate(labels):
             show = cv2.rectangle(show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (0, 255, 0), 1)    

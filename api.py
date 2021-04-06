@@ -3,7 +3,7 @@ from torchvision.ops import nms
 import torch
 import torch.nn.functional as F
 from torchvision.ops import nms
-def decode(net_outputs, strides, threshold, K, nms_type='union'):
+def decode(net_outputs, strides, threshold, K, use_nms=True):
     # net_outputs: List[ List[Tensor] ... List[Tensor]]
 
     all_bboxes = torch.Tensor([]).cuda()
@@ -47,10 +47,14 @@ def decode(net_outputs, strides, threshold, K, nms_type='union'):
     
     bboxes = []
     scores = []
-    for i in range(all_bboxes.size(0)):
-        keep = nms(all_bboxes[i], all_scores[i], iou_threshold=0.4)
-        bboxes.append(all_bboxes[i, keep].cpu().numpy())
-        scores.append(all_scores[i, keep].cpu().numpy())
+    if use_nms:
+        for i in range(all_bboxes.size(0)):
+            keep = nms(all_bboxes[i], all_scores[i], iou_threshold=0.4)
+            bboxes.append(all_bboxes[i, keep].cpu().numpy())
+            scores.append(all_scores[i, keep].cpu().numpy())
+    else:
+        bboxes = all_bboxes.cpu().numpy()
+        scores = all_scores.cpu().numpy()
     
     bboxes, scores = _filter_by_threshold(
         bboxes,

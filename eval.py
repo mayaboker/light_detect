@@ -18,7 +18,7 @@ def test(net, dataset, batch_size=32):
         dataset,
         batch_size=batch_size,
         pin_memory=True,
-        num_workers=0,
+        num_workers=4,
         shuffle=False,
         collate_fn=test_collate_fn
     )
@@ -74,7 +74,7 @@ def test(net, dataset, batch_size=32):
     propose = pr_curve[:, 0]
     recall = pr_curve[:, 1]
     ap = voc_ap(recall, propose)
-    return ap
+    return ap, pr_curve
 
 
 
@@ -83,6 +83,7 @@ if __name__ == "__main__":
     from utils.utils import load_yaml
     from transformations import get_test_transforms
     from factory import get_fpn_net, get_pedestrian_dataset
+    from utils.log_utils import Writer
 
     cfg = load_yaml('config.yaml')
     dataset = get_pedestrian_dataset(
@@ -91,10 +92,12 @@ if __name__ == "__main__":
                 augment=get_test_transforms(cfg['train']['transforms']),
                 mode='test'
     )
-
+    print(len(dataset))
     net = get_fpn_net(cfg['net'])
     net.cuda()
-    sd = torch.load('../logs/train_caviar_virat/a/checkpoints/Epoch_104.pth')['net_state_dict']
+    sd = torch.load('/home/core4/Documents/logs/train_virat/wh025/checkpoints/Epoch_55.pth')['net_state_dict']
     net.load_state_dict(sd)
-    ap = test(net, dataset)
+    ap, pr_curve = test(net, dataset)
     print(ap)
+    wrt = Writer('../logs/pr')
+    wrt.log_pr_curve(0, pr_curve)

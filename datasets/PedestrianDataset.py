@@ -1,9 +1,11 @@
 from abc import ABC
+from posix import listdir
 import torch
 import torch.utils.data
 import numpy as np
 from PIL import Image
 from datasets.dataset_utils import make_heatmaps
+from datasets.dataset_utils import padded_resize
 
 class PedestrianDataset(torch.utils.data.Dataset, ABC):
     def __init__(self, root, augment, strides=(4,), mode='train'):
@@ -22,11 +24,11 @@ class PedestrianDataset(torch.utils.data.Dataset, ABC):
     def __getitem__(self, index): 
         img = self.load_image(self.f_imgs[index])       
         labels = self.labels[index]
-
+        img, labels = padded_resize(img, (320, 320), labels)
         if self.mode == 'test':
             transformed = self.augment(image=img, bboxes=labels)
             img = transformed['image']
-            labels = transformed['bboxes']            
+            labels = transformed['bboxes']       
             return img, np.array(labels, dtype=np.float32)
             
         else:            

@@ -229,7 +229,7 @@ class Trainer:
 
     def test_ap(self, net, epoch):
         for dataset in self.test_datasets:
-            ap = test(net, dataset, batch_size=self.batch_size)
+            ap, _ = test(net, dataset, batch_size=self.batch_size)
             self.writer.log_ap(epoch, ap, dataset.name())
 
 

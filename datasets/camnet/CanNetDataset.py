@@ -5,10 +5,9 @@ import numpy as np
 import json
 from PIL import Image
 from utils.utils import load_yaml
-
 from datasets.PedestrianDataset import PedestrianDataset
 
-class ViratDataset(PedestrianDataset):
+class CamNetDataset(PedestrianDataset):
     def __init__(self, root, augment, strides=(4,), mode='train'):
         cfg = load_yaml('config.yaml')
         self.min_area = cfg['train']['transforms']['min_area']
@@ -65,7 +64,7 @@ if __name__ == "__main__":
 
     cfg = load_yaml('config.yaml')
     root = cfg['paths']['virat_dir']
-    D = ViratDataset(
+    D = CamNetDataset(
             root,
             augment=get_val_transforms(cfg['train']['transforms']),
             mode='train'
@@ -88,7 +87,7 @@ if __name__ == "__main__":
             show = cv2.rectangle(show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (255, 0, 0), 2)    
         for i, l in enumerate(labels):
             show = cv2.rectangle(show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (0, 255, 0), 1)    
-        if len(boxes[0]) != 0:
+        if len(boxes[0]) == 0:
             print(d, labels)
             plt.imshow(show)
             plt.show()
