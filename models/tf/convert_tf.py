@@ -149,7 +149,7 @@ if __name__ == '__main__':
     description='convert model')
 
     parser.add_argument('--ckpt', type=str, default='../tf_convert/sample_torch.pth', help='torch checkpoint path')
-    parser.add_argument('--name', type=str, default='test_tf', help='torch checkpoint path')
+    parser.add_argument('--name', type=str, default='test_tf', help='name of output model')
     parser.add_argument('--map', type=str, default='./models/tf/mapping_table.json', help='Mapping table json file')
     args = parser.parse_args()
     
