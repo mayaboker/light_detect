@@ -5,6 +5,7 @@ import xmltodict, json
 import matplotlib.pyplot as plt
 import os 
 import numpy as np
+import math
 
 MAX_SIZE = 640
 
@@ -92,7 +93,7 @@ def parse_data(root, out_dir, fps_save=2):
             frame_name = os.path.join(v_name, str(i).zfill(6) + '.png')
             cv2.imwrite(frame_path, frame)
             
-            v_labels[frame_name] = labels[i]   
+            v_labels[frame_name] = boxes   
 
         labels_path = os.path.join(frames_path, 'labels_gt.json')
         with open(labels_path, "w") as write_file:
@@ -109,27 +110,47 @@ def save_json(j_path, data):
     with open(j_path, 'w') as j:
         json.dump(data, j)
 
+
+def extract_scenes(video_names):
+    scenes = {}
+    for i, name in enumerate(video_names):
+        scene = name.split('/')[-1].split('_')[2]
+        if scene not in scenes.keys():
+            scenes[scene] = []
+        scenes[scene].append(i)
+    return scenes
+
 def split_data(root):
     subsets = [os.path.join(root, d) for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))]
-    rands = np.random.permutation(subsets)
+    # scenes = extract_scenes(subsets)
+
+    train_set = {}
+    val_set = {}
+    test_set = {}
+
+    inds = np.arange(0, len(subsets), 1)
+    rands = np.random.permutation(inds)
 
     split_inds = [int(len(rands)*0.7), int(len(rands)*0.9)]
     
     train_set = {}
     val_set = {}
     test_set = {}
-    for i, subset in enumerate(subsets):
+    for i, ind in enumerate(rands):
         if i < split_inds[0]:
+            print(f'Train: #{i} {subsets[ind]}')
             train_set.update(
-                load_json(os.path.join(subset, 'labels_gt.json'))
+                load_json(os.path.join(subsets[ind], 'labels_gt.json'))
             )
         elif i < split_inds[1]:
+            print(f'Val: #{i} {subsets[ind]}')
             val_set.update(
-                load_json(os.path.join(subset, 'labels_gt.json'))
+                load_json(os.path.join(subsets[ind], 'labels_gt.json'))
             )
         else:
+            print(f'Test: #{i} {subsets[ind]}')
             test_set.update(
-                load_json(os.path.join(subset, 'labels_gt.json'))
+                load_json(os.path.join(subsets[ind], 'labels_gt.json'))
             )
     save_json(os.path.join(root, 'train_gt.json'), train_set)
     save_json(os.path.join(root, 'val_gt.json'), val_set)
@@ -139,8 +160,8 @@ def split_data(root):
     print(f'Test samples: {len(test_set)}')
 
 if __name__ == "__main__":
-    root = r'/home/robert/Downloads/virat'
-    out_dir = 'frames_640'
+    root = r'/media/robert/DATA/virat'
+    out_dir = 'full'
     parse_data(root, out_dir, fps_save=2)
     split_data(os.path.join(root, out_dir))
 
