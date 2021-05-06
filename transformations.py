@@ -6,7 +6,7 @@ def get_train_transforms(cfg_trans):
     trans_list = A.Compose([        
         A.Resize(height=cfg_trans['in_size'][1], width=cfg_trans['in_size'][0], p=1),
         A.HorizontalFlip(p=0.5),                
-        A.RandomResizedCrop(height=cfg_trans['in_size'][1], width=cfg_trans['in_size'][0], scale=(0.8, 1.0), ratio=(0.75, 1.3333333333333333), interpolation=1, always_apply=False, p=0.5), 
+        A.RandomResizedCrop(height=cfg_trans['in_size'][1], width=cfg_trans['in_size'][0], scale=(0.5, 1.0), ratio=(0.75, 1.3333333333333333), interpolation=1, always_apply=False, p=0.5), 
         A.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2, always_apply=False, p=0.5),
         A.Normalize(mean=3*[0], std=3*[1]),        
         ToTensorV2(),

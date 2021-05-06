@@ -1,7 +1,7 @@
 {% set converted_models = '../converted_models' %}
 {% set data_dir = '/home/core4/data' %}
 {% set log_dir = '../logs' %}
-{% set exp_name = 'train_virat/wh05' %}
+{% set exp_name = 'train_virat/fullvoc2' %}
 
 
 paths:
@@ -12,7 +12,7 @@ paths:
 
   caviar_dir: {{ data_dir }}/CAVIAR
   voc_dir: {{ data_dir }}/pascal_voc_seg/VOCdevkit/VOC2012
-  virat_dir: {{ data_dir }}/virat/frames_640
+  virat_dir: {{ data_dir }}/virat/full
 
 net:
   one_feat_map: True
@@ -24,13 +24,13 @@ net:
     wh: 2
     of: 2
   pretrained: True
-  pretrained_model: '/home/core4/Documents/logs/test_virat2/checkpoints/Epoch_199.pth'
+  pretrained_model: '/home/core4/Documents/logs/train_virat/fullvoc2/checkpoints/Epoch_111.pth'
 
 train:   
-  dataset: virat   # caviar | voc | virat | multi
-  multi_datasets: ['virat', 'caviar']
+  dataset: multi   # caviar | voc | virat | multi
+  multi_datasets: ['virat', 'voc']
 
-  test_datasets: ['virat'] #['virat']
+  test_datasets: ['virat', 'voc'] #['virat']
 
   mixed_precision: True
   batch_size: 128

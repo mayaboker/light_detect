@@ -41,8 +41,8 @@ class Backbone(nn.Module):
 
         self.down_settings = [
             # c  n  s   f
-            [16, 1, 1, False],
-            [24, 2, 2, True],
+            [16, 2, 2, False],
+            [24, 2, 1, True],
             [32, 3, 2, True],
             [64, 2, 1, False],
             [96, 4, 2, True],
@@ -50,7 +50,7 @@ class Backbone(nn.Module):
             [320, 1, 1, True],
         ]
         self.feat_channels = [24, 32, 96, 320]
-        in_planes = 64
+        in_planes = 16
 
         self.stem = ConvBn(3, in_planes, 3, 2)
 

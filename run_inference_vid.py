@@ -16,16 +16,18 @@ import numpy as np
 if __name__ == "__main__":    
     
     '''model'''
-    f_model = '/home/core4/Documents/logs/train_virat/wh05/checkpoints/Epoch_47.pth'  
-    fnames = glob.glob('/home/core4/data/S1-20210405T161314Z-001/S1/Videos/*.avi')               
-    fnames = [r'/home/core4/data/S1-20210405T161314Z-001/S1/Videos/PRG22.avi']
+    f_model = '/home/core4/Documents/logs/train_virat/fullvoc2/checkpoints/Epoch_111.pth'
+    # fnames = glob.glob('/home/core4/data/S1-20210405T161314Z-001/S1/Videos/*.avi')               
+    #fnames = [r'/home/core4/data/virat/videos/VIRAT_S_010201_01_000125_000152.mp4']
+    fnames = [r'/home/core4/Downloads/The CCTV People Demo 2.mp4']
     height = 320
     width = 320
     '''model'''
     cfg = load_yaml('config.yaml')
     net = get_fpn_net(cfg['net'])    
-    sd = torch.load(f_model)['net_state_dict']
+    sd = torch.load(f_model, map_location="cuda")['net_state_dict']
     net.load_state_dict(sd)    
+    net.eval()
     net.cuda()
 
     for i_file, fname in enumerate(fnames):
@@ -34,9 +36,9 @@ if __name__ == "__main__":
         n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         h_frame = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         w_frame = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        print(h_frame, w_frame)
         i = 0
         f_res = fname[:-4] + '_res.avi'
-        print(fname)
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         vid_out = cv2.VideoWriter(f_res,fourcc, fps, (width, height))
         while(True):
@@ -47,15 +49,16 @@ if __name__ == "__main__":
             if not ret:
                 break            
             frame, _ = padded_resize(frame, size=(320, 320))
+            #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             x = to_tensor(frame).unsqueeze(0).float()
             x = normalize(x, mean=[0]*3, std=[1]*3)
             x = x.cuda()                
             with torch.no_grad():
-                out = net(x)
+                out = net(x.cuda())
             boxes, scores = decode(out, (4,), 0.4, K=50, use_nms=True)
-            #print(len(boxes[0]))               
             for j, (l, s) in enumerate(zip(boxes[0], scores[0])):                    
                 frame = cv2.rectangle(frame, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (0, 255, 0), 1)                
+
             vid_out.write(frame)
             i = i + 1            
         cap.release()

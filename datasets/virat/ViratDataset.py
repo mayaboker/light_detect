@@ -40,19 +40,7 @@ class ViratDataset(PedestrianDataset):
 
         return f_imgs, labels
     
-    def is_resized_contain_boxes(self, labels, img_name):
-        im = Image.open(img_name)
-        width, height = im.size
-        scale_w, scale_h = width / self.in_size[0], height / self.in_size[1]
 
-        for l in labels:
-            box_w, box_h = (l[2] - l[0]) / scale_w, (l[3] - l[1]) / scale_h
-            box_area = box_w * box_h
-            if box_area > self.min_area:
-                return True
-        return False
-
-    
     def name(self):
         return 'virat'
 
@@ -68,10 +56,10 @@ if __name__ == "__main__":
     D = ViratDataset(
             root,
             augment=get_val_transforms(cfg['train']['transforms']),
-            mode='train'
+            mode='val'
         )
     print(len(D))
-    for d in range(0, len(D)):
+    for d in range(320, len(D)):
         # print(d)
         img, hms, labels = D[d]
 
@@ -88,7 +76,7 @@ if __name__ == "__main__":
             show = cv2.rectangle(show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (255, 0, 0), 2)    
         for i, l in enumerate(labels):
             show = cv2.rectangle(show, (int(l[0]), int(l[1])), (int(l[2]), int(l[3])), (0, 255, 0), 1)    
-        if len(boxes[0]) != 0:
+        if len(labels) != 0:
             print(d, labels)
             plt.imshow(show)
             plt.show()

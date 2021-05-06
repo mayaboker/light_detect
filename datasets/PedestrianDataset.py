@@ -49,3 +49,16 @@ class PedestrianDataset(torch.utils.data.Dataset, ABC):
         img = Image.open(path)
         return np.array(img, dtype=np.float32)
 
+    def is_resized_contain_boxes(self, labels, img_name):
+        im = Image.open(img_name)
+        width, height = im.size
+        scale_w, scale_h = width / self.in_size[0], height / self.in_size[1]
+        scale = max(scale_w, scale_h)
+
+        for l in labels:
+            box_w, box_h = (l[2] - l[0]) / scale, (l[3] - l[1]) / scale
+            box_area = box_w * box_h
+            if box_area > self.min_area:
+                return True            
+        return False
+

@@ -16,9 +16,9 @@ import numpy as np
 if __name__ == "__main__":    
     
     '''model'''
-    f_model = '/home/core4/Documents/logs/train_virat/wh05/checkpoints/Epoch_47.pth'    
+    f_model = '/home/core4/Documents/logs/train_virat/wh05_160/checkpoints/Epoch_199.pth'    
     root = '/home/core4/data/virat/frames/VIRAT_S_010200_10_000923_000959' # test
-    # root = '/home/core4/data/virat/frames/VIRAT_S_010201_07_000601_000697'
+    root = '/home/core4/data/virat/frames/VIRAT_S_010201_07_000601_000697'
     #root = '/home/core4/data/CAVIAR'
     ext = 'png'    
     
