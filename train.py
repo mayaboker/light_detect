@@ -42,12 +42,14 @@ class Trainer:
 
         # data setup
         dataset_name = self.train_params['dataset']
+        self.use_multi = dataset_name == 'multi'
         print(f'Using dataset: {dataset_name}')
         self.train_dataset = get_pedestrian_dataset(
             dataset_name,
             self.paths,
             augment=get_train_transforms(self.trans_params),
-            mode='train'
+            mode='train',
+            multi_datasets=self.train_params['multi_datasets'] if self.use_multi else None
         )
         print(f'Train dataset: {len(self.train_dataset)} samples')
 
@@ -55,16 +57,19 @@ class Trainer:
             dataset_name,
             self.paths,
             augment=get_val_transforms(self.trans_params),
-            mode='val'
+            mode='val',
+            multi_datasets=self.train_params['multi_datasets'] if self.use_multi else None
         )
         print(f'Val dataset: {len(self.val_dataset)} samples')
-
-        self.test_dataset = get_pedestrian_dataset(
-            dataset_name,
-            self.paths,
-            augment=get_test_transforms(self.trans_params),
-            mode='test'
-        )
+        
+        tests_data = self.train_params['test_datasets']
+        self.test_datasets = [
+            get_pedestrian_dataset(
+                d_name,
+                self.paths,
+                augment=get_test_transforms(self.trans_params),
+                mode='test'
+        ) for d_name in tests_data]
 
         self.criterion = AnchorFreeLoss(self.train_params)
 
@@ -88,6 +93,7 @@ class Trainer:
         torch.backends.cudnn.deterministic = True
 
         batch_size = self.train_params['batch_size']
+        self.batch_size = batch_size
         num_workers = self.train_params['num_workers']
         pin_memory = self.train_params['pin_memory']
         print('Batch-size = {}'.format(batch_size))
@@ -158,7 +164,6 @@ class Trainer:
         net.train()
         val_rate = self.train_params['val_rate']
         test_rate = self.train_params['test_rate']
-
         for epoch in range(first_epoch, epochs):
             self.train_epoch(net, train_loader, epoch)
 
@@ -195,12 +200,14 @@ class Trainer:
             probs.update(hm_probs)
 
             if self.sched_type == 'ocp':
-                self.writer.log_lr(epoch * len(loader) + mini_batch_i, self.scheduler.get_last_lr()[0])
                 self.scheduler.step()
 
             loss_metric.add_sample(loss_dict)
             
             if mini_batch_i % self.update_interval == 0:
+                if self.sched_type == 'ocp':
+                # TODO write average lr
+                    self.writer.log_lr(epoch * len(loader) + mini_batch_i, self.scheduler.get_last_lr()[0])
                 self.writer.log_training(epoch * len(loader) + mini_batch_i, loss_metric)
         self.writer.log_probs(epoch, probs.get_average())
 
@@ -221,8 +228,9 @@ class Trainer:
             self.writer.log_eval(step, loss_metric)       
 
     def test_ap(self, net, epoch):
-        ap = test(net, self.test_dataset)
-        self.writer.log_ap(epoch, ap)
+        for dataset in self.test_datasets:
+            ap, _ = test(net, dataset, batch_size=self.batch_size)
+            self.writer.log_ap(epoch, ap, dataset.name())
 
 
 if __name__ == "__main__":

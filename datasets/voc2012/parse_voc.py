@@ -51,7 +51,7 @@ def preprocess_voc2012(path, categories):
                 x_max = float(bbox_str['xmax'])
                 y_min = float(bbox_str['ymin'])
                 y_max = float(bbox_str['ymax'])
-                cat = 1#classes[cat]                       
+                cat = categories.index(cat)
                 bbox.append([x_min, y_min, x_max, y_max, cat])                            
         if len(bbox) > 0:
             gt[img_name] = {'bbox': bbox, 'img_name': img_name}

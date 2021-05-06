@@ -1,7 +1,7 @@
 {% set converted_models = '../converted_models' %}
 {% set data_dir = '/home/core4/data' %}
 {% set log_dir = '../logs' %}
-{% set exp_name = 'test_caviar_refine2' %}
+{% set exp_name = 'Resnet50/virat-voc' %}
 
 
 paths:
@@ -12,30 +12,37 @@ paths:
 
   caviar_dir: {{ data_dir }}/CAVIAR
   voc_dir: {{ data_dir }}/pascal_voc_seg/VOCdevkit/VOC2012
+  virat_dir: {{ data_dir }}/virat/full
 
 net:
+  # lite resnet
+  backbone: resnet  
   one_feat_map: True
   upsample: 'interpolate'   # interpolate | conv
   strides: [4]
-  head_channels: 24
+  head_channels: 256
   channels_dict:
     hm: 1
     wh: 2
     of: 2
-  pretrained: True
-  pretrained_model: '/home/core4/Documents/logs/test_voc/checkpoints/Epoch_199.pth'
+  pretrained: False
+  pretrained_model: '/home/core4/Documents/logs/train_virat/fullvoc2/checkpoints/Epoch_111.pth'
 
 train:   
-  dataset: caviar   # caviar | voc
+  dataset: multi   # caviar | voc | virat | multi
+  multi_datasets: ['virat', 'voc']
+
+  test_datasets: ['virat', 'voc'] #['virat']
+
   mixed_precision: True
-  batch_size: 64
-  epochs: 500
+  batch_size: 16
+  epochs: 200
   lr: 0.001
   weight_decay: 0.00001
   #losses
   loss_weights:
     hm: 1
-    wh: 0.1
+    wh: 0.5
     of: 1
   losses:
     hm: asl     # asl | focal
@@ -43,7 +50,7 @@ train:
     of: sl1     # sl1
   asl_params:
     gamma_p: 2
-    gamma_n: 5
+    gamma_n: 2
     margin: 0.05
   # scheduler 
   scheduler: ocp  # ocp | multi_step
@@ -54,10 +61,10 @@ train:
     gamma: 0.1
 
   val_rate: 2     # rate of validation: epochs % val_rate 
-  test_rate: 1    # rate of test: epochs % (val_rate * test_rate)
-  num_workers: 0
+  test_rate: 2    # rate of test: epochs % (val_rate * test_rate)
+  num_workers: 4
   pin_memory: True
 
   transforms:
     in_size: [320, 320]
-    min_box: 10
+    min_area: 64    # stride tensor_min - min_area / stride
