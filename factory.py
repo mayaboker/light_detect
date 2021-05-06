@@ -1,6 +1,7 @@
+from models import resnet
 from models.BackLite import Backbone
+from models.resnet import resnet50
 from models.FpnNet import FpnNet
-# from resnet import resnet50
 from datasets.caviar.CAVIARDataset import CAVIARDataset
 from datasets.voc2012.VOC2012Dataset import VOCDataset
 from datasets.virat.ViratDataset import ViratDataset
@@ -62,7 +63,10 @@ def get_fpn_net(cfg_net, framework='torch'):
     one_feat_map = cfg_net['one_feat_map']
     upsample_mode = cfg_net['upsample']
 
-    backbone = Backbone(head_ch)
+    if cfg_net['backbone'] == 'lite':
+        backbone = Backbone(head_ch)
+    elif cfg_net['backbone'] == 'resnet':
+        backbone = resnet50()
     #backbone = resnet50()
     if framework == 'torch':
         backbone = Backbone(head_ch)

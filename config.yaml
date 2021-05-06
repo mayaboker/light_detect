@@ -1,7 +1,7 @@
 {% set converted_models = '../converted_models' %}
 {% set data_dir = '/home/core4/data' %}
 {% set log_dir = '../logs' %}
-{% set exp_name = 'train_virat/fullvoc2' %}
+{% set exp_name = 'Resnet50/virat-voc' %}
 
 
 paths:
@@ -15,15 +15,17 @@ paths:
   virat_dir: {{ data_dir }}/virat/full
 
 net:
+  # lite resnet
+  backbone: resnet  
   one_feat_map: True
   upsample: 'interpolate'   # interpolate | conv
   strides: [4]
-  head_channels: 24
+  head_channels: 256
   channels_dict:
     hm: 1
     wh: 2
     of: 2
-  pretrained: True
+  pretrained: False
   pretrained_model: '/home/core4/Documents/logs/train_virat/fullvoc2/checkpoints/Epoch_111.pth'
 
 train:   
@@ -33,10 +35,10 @@ train:
   test_datasets: ['virat', 'voc'] #['virat']
 
   mixed_precision: True
-  batch_size: 128
+  batch_size: 16
   epochs: 200
   lr: 0.001
-  weight_decay: 0.0000001
+  weight_decay: 0.00001
   #losses
   loss_weights:
     hm: 1
