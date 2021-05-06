@@ -57,10 +57,12 @@ def parse_data(root):
                 continue
             if v['objectlist'] is not None:
                 frame_id = int(v['@number'])
-                obj = v['objectlist']['object']
+                obj = v['objectlist']['object']                
                 if isinstance(obj, list):
                     bbox = []
-                    for d in obj:                        
+                    for d in obj:
+                        #if d['hypothesislist']['hypothesis']['context']['#text'] == 'immobile':
+                        #    continue                        
                         #don't rotate 90 degs
                         if subset == 'mall':
                             w = int(d['box']['@w'])
